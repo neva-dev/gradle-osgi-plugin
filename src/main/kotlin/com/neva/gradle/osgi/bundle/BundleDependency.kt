@@ -5,8 +5,8 @@ import org.gradle.api.artifacts.Dependency
 class BundleDependency {
 
     companion object {
-        fun from(dependency: Dependency) {
-            return BundleDependency().run {
+        fun from(dependency: Dependency): BundleDependency {
+            return BundleDependency().apply {
                 group = dependency.group
                 name = dependency.name
                 version = dependency.version

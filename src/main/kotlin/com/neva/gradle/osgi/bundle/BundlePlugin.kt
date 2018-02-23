@@ -6,6 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.zeroturnaround.zip.ZipUtil
 
 open class BundlePlugin : Plugin<Project> {
@@ -72,7 +73,12 @@ open class BundlePlugin : Plugin<Project> {
     }
 
     private fun Project.setupTasks() {
-        tasks.create(BundleTask.NAME, BundleTask::class.java)
+        val build = tasks.getByName(LifecycleBasePlugin.BUILD_TASK_NAME)
+        val bundle = tasks.create(BundleTask.NAME, BundleTask::class.java)
+        val jar = tasks.getByName(JavaPlugin.JAR_TASK_NAME)
+
+        bundle.dependsOn(jar)
+        build.dependsOn(bundle)
     }
 
 }

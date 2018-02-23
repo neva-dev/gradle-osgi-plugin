@@ -1,10 +1,18 @@
-plugins {
-    id 'com.neva.osgi.bundle'
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'com.neva.gradle:osgi-plugin:1.0.0-SNAPSHOT'
+    }
 }
 
 group = 'com.company.app'
 version = '1.0.0-SNAPSHOT'
 description = 'Example'
+defaultTasks = [':osgiBundle']
 
 apply plugin: 'com.neva.osgi.bundle'
 

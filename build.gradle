@@ -6,9 +6,9 @@ plugins {
 }
 
 description = 'Gradle OSGi Plugin'
-defaultTasks = ['build', 'publishToMavenLocal']
+defaultTasks = ['publishToMavenLocal']
 group = 'com.neva.gradle'
-version = '0.1.0-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 repositories {
     jcenter()
@@ -52,22 +52,22 @@ compileTestKotlin {
     }
 }
 
-//gradlePlugin {
-//    plugins {
-//        base {
-//            id = "com.neva.gradle.bundle.base"
-//            implementationClass = "com.neva.gradle.osgi.base.BasePlugin"
-//        }
-//        bundle {
-//            id = "com.neva.gradle.bundle.package"
-//            implementationClass = "com.neva.gradle.osgi.bundle.BundlePlugin"
-//        }
-//        instance {
-//            id = "com.neva.gradle.bundle.instance"
-//            implementationClass = "com.neva.gradle.osgi.instance.InstancePlugin"
-//        }
-//    }
-//}
+gradlePlugin {
+    plugins {
+        base {
+            id = "com.neva.osgi.base"
+            implementationClass = "com.neva.gradle.osgi.base.BasePlugin"
+        }
+        bundle {
+            id = "com.neva.osgi.bundle"
+            implementationClass = "com.neva.gradle.osgi.bundle.BundlePlugin"
+        }
+        instance {
+            id = "com.neva.osgi.instance"
+            implementationClass = "com.neva.gradle.osgi.instance.InstancePlugin"
+        }
+    }
+}
 
 publishing {
     publications {
