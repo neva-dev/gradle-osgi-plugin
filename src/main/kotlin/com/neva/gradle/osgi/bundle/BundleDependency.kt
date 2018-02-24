@@ -1,5 +1,6 @@
 package com.neva.gradle.osgi.bundle
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 
@@ -9,11 +10,11 @@ class BundleDependency {
 
         fun from(project: Project): BundleDependency {
             if (project.group !is String || (project.group as String).isBlank()) {
-                throw BundleException("Project group cannot be blank in $project")
+                throw BundleException("Project group cannot be blank: $project")
             }
 
             if (project.group !is String || (project.group as String).isBlank()) {
-                throw BundleException("Project version cannot be blank in $project")
+                throw BundleException("Project version cannot be blank: $project")
             }
 
             return BundleDependency().apply {
@@ -23,13 +24,17 @@ class BundleDependency {
             }
         }
 
+        private fun Dependency.displayName(): String {
+            return "[group=$group,name=$name,version=$version]"
+        }
+
         fun from(dependency: Dependency): BundleDependency {
             if (dependency.group.isNullOrBlank()) {
-                throw BundleException("Dependency group cannot be blank in $dependency")
+                throw BundleException("Dependency group cannot be blank: ${dependency.displayName()}")
             }
 
             if (dependency.version.isNullOrBlank()) {
-                throw BundleException("Dependency version cannot be blank in $dependency")
+                throw BundleException("Dependency version cannot be blank: ${dependency.displayName()}")
             }
 
             return BundleDependency().apply {
@@ -46,7 +51,13 @@ class BundleDependency {
 
     lateinit var version: String
 
+    @get:JsonIgnore
     val notation: String
         get() = "$group:$name:$version"
+
+    // TODO $group/$name-$version.jar // to avoid collisions
+    @get:JsonIgnore
+    val jarPath: String
+        get() = "$name-$version.jar"
 
 }

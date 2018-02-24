@@ -2,13 +2,13 @@ package com.neva.gradle.osgi.bundle
 
 import org.gradle.api.Project
 
-class BundleDescriptor {
+class BundleMetadata {
 
     companion object {
-        fun of(project: Project): BundleDescriptor {
+        fun of(project: Project): BundleMetadata {
             val dependenciesConfig = project.configurations.getByName(BundlePlugin.DEPENDENCIES_CONFIG_NAME)
 
-            return BundleDescriptor().apply {
+            return BundleMetadata().apply {
                 artifact = BundleDependency.from(project)
                 dependencies = dependenciesConfig.allDependencies.map { BundleDependency.from(it) }
             }
@@ -17,7 +17,10 @@ class BundleDescriptor {
 
     lateinit var artifact: BundleDependency
 
-    lateinit var dependencies: List<BundleDependency>
+    var dependencies: List<BundleDependency> = listOf()
+
+    val allDependencies: List<BundleDependency>
+        get() = mutableListOf<BundleDependency>() + artifact + dependencies
 
 }
 

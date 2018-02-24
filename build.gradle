@@ -8,7 +8,7 @@ plugins {
 description = 'Gradle OSGi Plugin'
 defaultTasks = ['publishToMavenLocal']
 group = 'com.neva.gradle'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.0'
 
 repositories {
     jcenter()
@@ -20,10 +20,9 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:1.2.21"
 
     compile 'org.zeroturnaround:zt-zip:1.12'
-    compile 'com.beust:klaxon:2.1.6'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'commons-io:commons-io:2.4'
-    compile 'commons-validator:commons-validator:1.6'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8'
     compile 'org.reflections:reflections:0.9.9'
     compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
 

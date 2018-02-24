@@ -8,12 +8,13 @@ Assumptions:
 * Bundle plugin can produce **.bundle* file containing bundles (and dependent bundles) and descriptor (metadata.json) which will be read by Gradle to handle transitive dependencies and multiple versions of sample bundle, task `osgiBundle`.
 * Instance plugin will deploy on raw OSGi framework only one special *Neva OSGi Framework* bundle which will handle *.bundle files installation (like Apache Felix File Install, but using HTTP protocol), task `osgiDeploy`
 * Instance plugin will provide tasks to control running OSGi instance: `osgiUp`, `osgiHalt`, `osgiDestroy` (like Vagrant commands).
-
+* Instance plugin will be able to create self-extractable instance: `osgiBuild` will create a JAR with main class that will extract instance and run it.
 
 Bundle *.bundle file structure:
 
 * osgi/metadata.json
-* osgi/bundles/*.jar
+* osgi/dependencies/*.jar 
+* osgi/artifact/*.jar (optional, bundle file could be only collection of plain old OSGi bundles)
 * content (e.g JCR content)
 * ...
 

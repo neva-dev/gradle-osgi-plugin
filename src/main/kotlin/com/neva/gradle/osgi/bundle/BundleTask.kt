@@ -1,6 +1,6 @@
 package com.neva.gradle.osgi.bundle
 
-import com.beust.klaxon.Klaxon
+import com.neva.gradle.osgi.internal.Formats
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Jar
@@ -17,9 +17,10 @@ open class BundleTask : Zip() {
 
     @get:OutputFile
     val metadataFile: File
-        get() = project.file(BundlePlugin.METADATA_FILE)
+        get() = project.file("${BundlePlugin.TMP_PATH}/${BundlePlugin.METADATA_FILE}")
 
-    @get:InputFile
+    @get:InputFiles
+    @get:Optional
     val artifactFile
         get() = project.file((project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar).archivePath)
 
@@ -37,9 +38,9 @@ open class BundleTask : Zip() {
         extension = "bundle"
 
         project.afterEvaluate {
-            into("osgi", { spec -> spec.from(metadataFile) })
-            into("osgi/artifact", { spec -> spec.from(artifactFile) })
-            into("osgi/dependencies", { spec -> spec.from(dependencyFiles) })
+            into(BundlePlugin.OSGI_PATH, { spec -> spec.from(metadataFile) })
+            into(BundlePlugin.ARTIFACT_PATH, { spec -> spec.from(artifactFile) })
+            into(BundlePlugin.DEPENDENCIES_PATH, { spec -> spec.from(dependencyFiles) })
         }
     }
 
@@ -60,8 +61,8 @@ open class BundleTask : Zip() {
     private fun generateMetadata() {
         GFileUtils.mkdirs(metadataFile.parentFile)
 
-        val descriptor = BundleDescriptor.of(project)
-        val json = Klaxon().toJsonString(descriptor) // TODO pretty print
+        val descriptor = BundleMetadata.of(project)
+        val json = Formats.toJson(descriptor)
 
         metadataFile.printWriter().use { it.print(json) }
     }

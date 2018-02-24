@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.neva.gradle:osgi-plugin:1.0.0-SNAPSHOT'
+        classpath 'com.neva.gradle:osgi-plugin:1.0.0'
     }
 }
 
@@ -19,13 +19,23 @@ apply plugin: 'com.neva.osgi.bundle'
 repositories {
     jcenter()
     maven { url  "https://dl.bintray.com/neva-dev/maven-public" }
+    mavenLocal()
 }
 
 dependencies {
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.5.10'
-    compile group: 'org.osgi', name: 'osgi.cmpn', version: '6.0.0'
+    compileOnly group: 'org.osgi', name: 'osgi.cmpn', version: '6.0.0'
+
+//    bundleCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+//    bundleRuntime group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+//
+//    bundleRuntime 'com.neva.felix:search-webconsole-plugin:1.2.0'
+
+    bundle group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    bundle group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 
     bundle 'com.neva.felix:search-webconsole-plugin:1.2.0'
+    bundle group: 'com.neva.osgi.bundle', name: 'vertx', version:'1.0.0-SNAPSHOT',ext:'bundle'
+
 }
 
 jar {
