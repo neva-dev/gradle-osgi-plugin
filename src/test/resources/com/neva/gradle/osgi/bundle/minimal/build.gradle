@@ -12,7 +12,7 @@ buildscript {
 group = 'com.company.app'
 version = '1.0.0-SNAPSHOT'
 description = 'Example'
-defaultTasks = [':osgiBundle']
+defaultTasks = [':build']
 
 apply plugin: 'com.neva.osgi.bundle'
 
