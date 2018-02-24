@@ -18,11 +18,14 @@ apply plugin: 'com.neva.osgi.bundle'
 
 repositories {
     jcenter()
+    maven { url  "https://dl.bintray.com/neva-dev/maven-public" }
 }
 
 dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.5.10'
     compile group: 'org.osgi', name: 'osgi.cmpn', version: '6.0.0'
+
+    bundle 'com.neva.felix:search-webconsole-plugin:1.2.0'
 }
 
 jar {
