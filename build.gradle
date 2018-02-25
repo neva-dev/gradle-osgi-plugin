@@ -1,97 +1,35 @@
-plugins {
-    id 'java-gradle-plugin'
-    id 'maven-publish'
-    id "org.jetbrains.kotlin.jvm" version "1.2.21"
-    id "com.jfrog.bintray" version "1.7.3"
-}
-
-description = 'Gradle OSGi Plugin'
+description = 'OSGi Toolkit'
 defaultTasks = ['publishToMavenLocal']
-group = 'com.neva.gradle'
-version = '1.0.0'
 
-repositories {
-    jcenter()
-}
+subprojects { subproject ->
+    group = 'com.neva.osgi.toolkit'
+    version = '1.0.0'
 
-dependencies {
-    compile gradleApi()
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.21"
-
-    compile 'org.zeroturnaround:zt-zip:1.12'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'commons-io:commons-io:2.4'
-    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8'
-    compile 'org.reflections:reflections:0.9.9'
-    compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
-
-    testCompile gradleTestKit()
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-
-}
-
-jar {
-    manifest {
-        attributes([
-                'Implementation-Title'  : project.description,
-                'Implementation-Version': project.version
-        ])
+    repositories {
+        jcenter()
     }
-}
 
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
-gradlePlugin {
-    plugins {
-        base {
-            id = "com.neva.osgi.base"
-            implementationClass = "com.neva.gradle.osgi.base.BasePlugin"
+    if (subproject.plugins.hasPlugin('org.jetbrains.kotlin.jvm')) {
+        compileKotlin {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
         }
-        bundle {
-            id = "com.neva.osgi.package"
-            implementationClass = "com.neva.gradle.osgi.pkg.PackagePlugin"
-        }
-        instance {
-            id = "com.neva.osgi.instance"
-            implementationClass = "com.neva.gradle.osgi.instance.InstancePlugin"
+        compileTestKotlin {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
         }
     }
-}
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+    if (subproject.plugins.hasPlugin('java')) {
+        jar {
+            manifest {
+                attributes([
+                        'Implementation-Title'  : project.description,
+                        'Implementation-Version': project.version
+                ])
+            }
         }
     }
-}
-
-bintray {
-    user = project.properties.get('bintrayUser') ?: System.getenv('BINTRAY_USER')
-    key = project.properties.get('bintrayKey') ?: System.getenv('BINTRAY_KEY')
-    publications = ['mavenJava']
-    pkg {
-        repo = 'maven-public'
-        name = 'gradle-osgi-plugin'
-        userOrg = 'neva-dev'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/neva-dev/gradle-osgi-plugin.git'
-        labels = ['gradle', 'archetype', 'template']
-        version {
-            name = project.version
-            desc = "${project.description} ${project.version}"
-            vcsTag = project.version
-        }
-    }
-    publish = true
 }

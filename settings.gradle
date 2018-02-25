@@ -1,1 +1,24 @@
-rootProject.name = 'osgi-plugin'
+// Plugins configuration
+
+pluginManagement {
+    repositories {
+        jcenter()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'org.jetbrains.kotlin.jvm') {
+                useModule('org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.21')
+            } else if (requested.id.id == 'com.jfrog.bintray') {
+                useModule('com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3')
+            }
+        }
+    }
+}
+
+// Project structure
+
+rootProject.name = 'osgi-toolkit'
+
+include 'gradle-plugin'
+include 'framework-launcher'
+include 'manager-bundle'
