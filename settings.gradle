@@ -20,5 +20,6 @@ pluginManagement {
 rootProject.name = 'osgi-toolkit'
 
 include 'gradle-plugin'
-include 'framework-launcher'
 include 'manager-bundle'
+include 'framework-launcher'
+include 'distribution-launcher'
