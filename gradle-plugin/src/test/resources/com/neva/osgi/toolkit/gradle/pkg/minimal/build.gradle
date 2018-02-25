@@ -1,12 +1,5 @@
-buildscript {
-    repositories {
-        jcenter()
-        mavenLocal()
-    }
-
-    dependencies {
-        classpath 'com.neva.osgi.toolkit:gradle-plugin:1.0.0'
-    }
+plugins {
+    id 'osgi.toolkit.package'
 }
 
 group = 'com.company.app'

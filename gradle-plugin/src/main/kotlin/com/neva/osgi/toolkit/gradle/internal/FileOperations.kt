@@ -15,7 +15,7 @@ import java.nio.file.Paths
 
 object FileOperations {
 
-    const val PKG = "com.neva.gradle.osgi"
+    const val PKG = "com.neva.osgi.toolkit.gradle"
 
     fun readResource(path: String): InputStream? {
         return javaClass.getResourceAsStream("/${PKG.replace(".", "/")}/$path")
