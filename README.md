@@ -5,21 +5,22 @@ OSGi made easy. Bring fun to development of applications based on OSGi framework
 Assumptions:
 
 * Instance plugin can setup from the scratch Apache Felix Main Distribution (and later even Knoplerfish), task `osgiSetup` (reduces manual setup, fully automatized).
-* Bundle plugin can produce **.bundle* file containing bundles (and dependent bundles) and descriptor (metadata.json) which will be read by Gradle to handle transitive dependencies and multiple versions of sample bundle, task `osgiBundle`.
-* Instance plugin will deploy on raw OSGi framework only one special *Neva OSGi Framework* bundle which will handle *.bundle files installation (like Apache Felix File Install, but using HTTP protocol), task `osgiDeploy`
+* Package plugin can produce **.jar* file containing bundles (and dependent bundles) and descriptor (metadata.json) which will be read by Gradle to handle transitive dependencies and multiple versions of sample bundle, task `osgiPackage`.
+* Instance plugin will deploy on raw OSGi framework only one special *Neva OSGi Framework* bundle which will handle package files installation (like Apache Felix File Install, but using HTTP protocol), task `osgiDeploy`
 * Instance plugin will provide tasks to control running OSGi instance: `osgiUp`, `osgiHalt`, `osgiDestroy` (like Vagrant commands).
-* Instance plugin will be able to create self-extractable instance: `osgiBuild` will create a JAR with main class that will extract instance and run it.
+* Instance plugin will be able extend package to be self-extractable, instance: `osgiBuild` will create a JAR with main class that will extract instance and run it.
 
-Bundle *.bundle file structure:
+OSGi package file structure:
 
-* osgi/metadata.json
-* osgi/dependencies/*.jar 
+* osgi/metadata.json (required, only jars having that file will be treated as OSGi packages)
+* osgi/dependencies/*.jar (optional, complete embedded set of jars used to create package artifact, both compile and runtime bundles to be placed onto Felix)
 * osgi/artifact/*.jar (optional, bundle file could be only collection of plain old OSGi bundles)
+* osgi/distribution (unpacked Apache Felix Main Distribution, main class will extract that files, then deploy itself assuming that distro will contain Neva OSGi Framework bundle)
 * content (e.g JCR content)
 * ...
 
 The draft above which allow to easily develop a bundles which will provide complete features, framework and applications - not only separate bundles which we have to collect by our own.
-Sample bundles (granularity of bundles will be controlled on demand by developers):
+Sample packages (granularity of packages will be controlled on demand by developers):
 
 * Netty (containing bundles: common, buffer, transport, handler, codec etc)
 * Vert.x framework (containing Vert.x Core, Vertx.x Web)
@@ -32,7 +33,7 @@ or even application related (more recommended, like AEM CRX packages)
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+Project is using [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
 ## Authors
 
@@ -40,4 +41,4 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+**Gradle OSGi Plugin** is licensed under the [Apache License, Version 2.0 (the "License")](https://www.apache.org/licenses/LICENSE-2.0.txt)

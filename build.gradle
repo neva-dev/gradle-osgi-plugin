@@ -58,8 +58,8 @@ gradlePlugin {
             implementationClass = "com.neva.gradle.osgi.base.BasePlugin"
         }
         bundle {
-            id = "com.neva.osgi.bundle"
-            implementationClass = "com.neva.gradle.osgi.bundle.BundlePlugin"
+            id = "com.neva.osgi.package"
+            implementationClass = "com.neva.gradle.osgi.pkg.PackagePlugin"
         }
         instance {
             id = "com.neva.osgi.instance"
