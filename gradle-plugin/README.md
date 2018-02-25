@@ -18,4 +18,4 @@ Project is using [SemVer](http://semver.org/) for versioning. For the versions a
 
 ## License
 
-**OSGi Toolkit** is licensed under the [Apache License, Version 2.0 (the "License")](https://www.apache.org/licenses/LICENSE-2.0.txt)
+**OSGi Toolkit - Gradle Plugin** is licensed under the [Apache License, Version 2.0 (the "License")](https://www.apache.org/licenses/LICENSE-2.0.txt)
