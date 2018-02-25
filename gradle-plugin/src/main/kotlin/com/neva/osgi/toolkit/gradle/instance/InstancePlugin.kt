@@ -14,7 +14,7 @@ open class InstancePlugin : Plugin<Project> {
         logger.info("Applying OSGi instance plugin")
 
         plugins.apply(BasePlugin::class.java)
-        tasks.create(CreateTask.NAME, CreateTask::class.java)
+        tasks.create(DistributionTask.NAME, DistributionTask::class.java)
     }
 
 }
