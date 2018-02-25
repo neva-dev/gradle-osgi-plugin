@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'com.neva.gradle:osgi-plugin:1.0.0'
+    }
+}
+
+group = 'com.company.app'
+version = '1.0.0-SNAPSHOT'
+description = 'Example'
+defaultTasks = [':clean', ':build']
+
+apply plugin: 'com.neva.osgi.package'
+
+repositories {
+    jcenter()
+    maven { url  "https://dl.bintray.com/neva-dev/maven-public" }
+    mavenLocal()
+}
+
+dependencies {
+    compileOnly group: 'org.osgi', name: 'osgi.cmpn', version: '6.0.0'
+
+    osgiPackage group: 'com.neva.osgi.package', name: 'vertx', version:'1.0.0-SNAPSHOT'
+    osgiCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    osgiRuntime group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+    osgiRuntime 'com.neva.felix:search-webconsole-plugin:1.2.0'
+}
+
+jar {
+    manifest {
+        attributes([
+                'Bundle-Name'    : description,
+                'Bundle-Category': 'example',
+                'Bundle-Vendor'  : 'Company'
+        ])
+    }
+}

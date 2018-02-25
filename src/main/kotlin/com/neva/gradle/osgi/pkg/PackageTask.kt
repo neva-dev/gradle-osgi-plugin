@@ -28,12 +28,13 @@ open class PackageTask : Jar() {
     val dependencies: Map<Dependency, File>
         get() {
             val config = project.configurations.getByName(PackagePlugin.ALL_CONFIG_NAME)
-            val dependencies = config.allDependencies.fold(mutableMapOf<Dependency, File?>(), { r, d ->
-                r[d] = config.files(d).singleOrNull(); r
+            return config.allDependencies.fold(mutableMapOf(), { r, d ->
+                val file = config.files(d).singleOrNull()
+                if (file != null && file.exists() && isOsgiBundle(file)) {
+                    r[d] = file
+                }
+                r
             })
-
-            @Suppress("unchecked_cast")
-            return dependencies.filterValues { it != null && isOsgiBundle(it) } as Map<Dependency, File>
         }
 
     @get:InputFiles
@@ -53,7 +54,7 @@ open class PackageTask : Jar() {
 
     private fun isOsgiBundle(file: File): Boolean {
         return try {
-            !aQute.bnd.osgi.Jar(file).manifest.mainAttributes.getValue("Bundle-SymbolicName").isNullOrBlank()
+            !Bundle(file).manifest.mainAttributes.getValue("Bundle-SymbolicName").isNullOrBlank()
         } catch (e: Exception) {
             false
         }

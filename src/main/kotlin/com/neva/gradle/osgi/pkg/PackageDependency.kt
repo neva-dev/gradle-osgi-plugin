@@ -32,11 +32,9 @@ class PackageDependency : Serializable {
         }
 
         fun manyFrom(project: Project): List<PackageDependency> {
-            val config = project.configurations.getByName(PackagePlugin.ALL_CONFIG_NAME)
-            return config.allDependencies.map {
-                val file = config.files(it).single()
-                from(project, it, file)
-            }
+            val task = project.tasks.getByName(PackageTask.NAME) as PackageTask
+
+            return task.dependencies.map { from(project, it.key, it.value) }
         }
 
         fun from(project: Project, dependency: Dependency, file: File): PackageDependency {
