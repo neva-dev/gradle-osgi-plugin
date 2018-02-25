@@ -1,16 +1,15 @@
 package com.neva.gradle.osgi.bundle
 
 import org.gradle.api.Project
+import java.io.Serializable
 
-class BundleMetadata {
+class BundleMetadata : Serializable {
 
     companion object {
         fun of(project: Project): BundleMetadata {
-            val dependenciesConfig = project.configurations.getByName(BundlePlugin.DEPENDENCIES_CONFIG_NAME)
-
             return BundleMetadata().apply {
                 artifact = BundleDependency.from(project)
-                dependencies = dependenciesConfig.allDependencies.map { BundleDependency.from(it) }
+                dependencies = BundleDependency.manyFrom(project)
             }
         }
     }

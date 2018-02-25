@@ -1,6 +1,7 @@
 package com.neva.gradle.osgi.bundle
 
 import com.neva.gradle.osgi.internal.Formats
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Jar
@@ -25,12 +26,20 @@ open class BundleTask : Zip() {
         get() = project.file((project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar).archivePath)
 
     @get:Internal
-    val dependencyConfig
-        get() = project.configurations.getByName(BundlePlugin.DEPENDENCIES_CONFIG_NAME)
+    val dependencies: Map<Dependency, File>
+        get() {
+            val config = project.configurations.getByName(BundlePlugin.ALL_CONFIG_NAME)
+            val dependencies = config.allDependencies.fold(mutableMapOf<Dependency, File?>(), { r, d ->
+                r[d] = config.files(d).singleOrNull(); r
+            })
+
+            @Suppress("unchecked_cast")
+            return dependencies.filterValues { it != null && isOsgiBundle(it) } as Map<Dependency, File>
+        }
 
     @get:InputFiles
     val dependencyFiles
-        get() = dependencyConfig.resolve().filter { isOsgiBundle(it) }
+        get() = dependencies.values
 
     init {
         group = "OSGi"
@@ -38,15 +47,15 @@ open class BundleTask : Zip() {
         extension = "bundle"
 
         project.afterEvaluate {
-            into(BundlePlugin.OSGI_PATH, { spec -> spec.from(metadataFile) })
-            into(BundlePlugin.ARTIFACT_PATH, { spec -> spec.from(artifactFile) })
-            into(BundlePlugin.DEPENDENCIES_PATH, { spec -> spec.from(dependencyFiles) })
+            into(BundlePlugin.OSGI_PATH, { it.from(metadataFile) })
+            into(BundlePlugin.ARTIFACT_PATH, { it.from(artifactFile) })
+            dependencies.forEach { d, f -> into("${BundlePlugin.DEPENDENCIES_PATH}/${d.group}", { it.from(f) }) }
         }
     }
 
     private fun isOsgiBundle(file: File): Boolean {
         return try {
-            !Bundle(file).manifest.mainAttributes.getValue("Bundle-SymbolicName").isNullOrBlank()
+            !aQute.bnd.osgi.Jar(file).manifest.mainAttributes.getValue("Bundle-SymbolicName").isNullOrBlank()
         } catch (e: Exception) {
             false
         }
@@ -54,15 +63,15 @@ open class BundleTask : Zip() {
 
     @TaskAction
     override fun copy() {
-        generateMetadata()
+        generateMetadataFile()
         super.copy()
     }
 
-    private fun generateMetadata() {
+    private fun generateMetadataFile() {
         GFileUtils.mkdirs(metadataFile.parentFile)
 
-        val descriptor = BundleMetadata.of(project)
-        val json = Formats.toJson(descriptor)
+        val metadata = BundleMetadata.of(project)
+        val json = Formats.toJson(metadata)
 
         metadataFile.printWriter().use { it.print(json) }
     }

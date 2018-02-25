@@ -1,6 +1,5 @@
 package com.neva.gradle.osgi.bundle
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.component.ComponentIdentifier
@@ -11,28 +10,16 @@ import org.gradle.api.internal.tasks.DefaultTaskDependency
 import org.gradle.api.tasks.TaskDependency
 import java.io.File
 
-// TODO replace with dependency.fileTree that matches single file (or not)
-class BundleSelfResolvingDependency(
-        private val project: Project,
-        private val dependency: BundleDependency
-) : AbstractDependency(), FileCollectionDependency, SelfResolvingDependencyInternal {
-
-    override fun getTargetComponentId(): ComponentIdentifier? {
-        return ComponentIdentifier { dependency.jarPath }
-    }
+class BundleSelfResolvingDependency(val source: FileCollection, val dependency: BundleDependency)
+    : AbstractDependency(), FileCollectionDependency, SelfResolvingDependencyInternal {
 
     override fun getFiles(): FileCollection {
-        return project.files(source)
+        return source
     }
 
     override fun resolve(): MutableSet<File> {
-        return mutableSetOf(source)
+        return source.toMutableSet()
     }
-
-    private val source: File
-        get() {
-            return project.file("${BundlePlugin.TMP_PATH}/${BundlePlugin.DEPENDENCIES_PATH}/${dependency.jarPath}")
-        }
 
     override fun resolve(transitive: Boolean): MutableSet<File> {
         return resolve()
@@ -59,10 +46,14 @@ class BundleSelfResolvingDependency(
     }
 
     override fun copy(): Dependency {
-        return BundleSelfResolvingDependency(project, dependency)
+        return BundleSelfResolvingDependency(source, dependency)
     }
 
     override fun getBuildDependencies(): TaskDependency {
         return DefaultTaskDependency()
+    }
+
+    override fun getTargetComponentId(): ComponentIdentifier? {
+        return ComponentIdentifier { dependency.notation }
     }
 }
