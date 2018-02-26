@@ -10,6 +10,9 @@ pluginManagement {
                 useModule('org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.21')
             } else if (requested.id.id == 'com.jfrog.bintray') {
                 useModule('com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3')
+            } else if (requested.id.namespace == 'osgi.toolkit') {
+                // TODO move gradle-plugin to buildSrc (then release it from there)
+                useModule('com.neva.osgi.toolkit:gradle-plugin:1.0.0')
             }
         }
     }
@@ -20,6 +23,6 @@ pluginManagement {
 rootProject.name = 'osgi-toolkit'
 
 include 'gradle-plugin'
-include 'manager-bundle'
+include 'package-manager'
 include 'framework-launcher'
 include 'distribution-launcher'

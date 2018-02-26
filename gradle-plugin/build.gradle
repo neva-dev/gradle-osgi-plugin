@@ -31,6 +31,10 @@ gradlePlugin {
             implementationClass = "com.neva.osgi.toolkit.gradle.base.BasePlugin"
         }
         bundle {
+            id = "osgi.toolkit.bundle"
+            implementationClass = "com.neva.osgi.toolkit.gradle.bundle.BundlePlugin"
+        }
+        pkg {
             id = "osgi.toolkit.package"
             implementationClass = "com.neva.osgi.toolkit.gradle.pkg.PackagePlugin"
         }
@@ -40,6 +44,8 @@ gradlePlugin {
         }
     }
 }
+
+test.dependsOn('publishToMavenLocal')
 
 publishing {
     publications {

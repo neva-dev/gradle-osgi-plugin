@@ -23,10 +23,10 @@ open class DistributionTask : Jar() {
     }
 
     @Input
-    var packageManager: Any = project.project(":package-manager").run { "$group:$name:$version" }
+    var packageManager: Any = "com.neva.osgi.toolkit:distribution-launcher:1.0.0"
 
     @Input
-    var frameworkLauncher: Any = project.project(":framework-launcher").run { "$group:$name:$version" }
+    var frameworkLauncher: Any = "com.neva.osgi.toolkit:framework-launcher:1.0.0"
 
     @Input
     var distributionDependency: Any = mapOf(

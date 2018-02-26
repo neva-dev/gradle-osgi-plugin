@@ -3,11 +3,8 @@ plugins {
 }
 
 group = 'com.company.app'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.0'
 description = 'Example'
-defaultTasks = [':clean', ':build']
-
-apply plugin: 'osgi.toolkit.package'
 
 repositories {
     jcenter()
@@ -28,8 +25,8 @@ jar {
     manifest {
         attributes([
                 'Bundle-Name'    : description,
-                'Bundle-Category': 'example',
-                'Bundle-Vendor'  : 'Company'
+                'Bundle-Category': 'OSGi Toolkit',
+                'Bundle-Vendor'  : 'Neva'
         ])
     }
 }

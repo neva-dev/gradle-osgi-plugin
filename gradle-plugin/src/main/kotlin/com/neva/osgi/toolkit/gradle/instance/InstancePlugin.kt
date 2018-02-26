@@ -7,7 +7,7 @@ import org.gradle.api.plugins.BasePlugin
 open class InstancePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.run { configure() }
+        project.configure()
     }
 
     private fun Project.configure() {

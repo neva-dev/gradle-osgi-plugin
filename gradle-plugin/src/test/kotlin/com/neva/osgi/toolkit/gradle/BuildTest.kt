@@ -1,7 +1,6 @@
 package com.neva.osgi.toolkit.gradle
 
 import com.neva.osgi.toolkit.gradle.internal.FileOperations
-import com.neva.osgi.toolkit.gradle.pkg.PackagePlugin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -10,26 +9,47 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 
 abstract class BuildTest {
+
+    class Result(val build: BuildResult, val projectDir: File) {
+
+        fun file(path: String): File {
+            return File(projectDir, path)
+        }
+
+    }
 
     @Rule
     @JvmField
     var tmpDir = TemporaryFolder()
 
-    fun buildScript(scriptDir: String, configurer: (runner: GradleRunner, projectDir: File) -> Unit) {
+    fun build(scriptDir: String, taskName: String) {
+        build(scriptDir, listOf(taskName), {})
+    }
+
+    fun build(scriptDir: String, taskName: String, checker: (Result) -> Unit) {
+        build(scriptDir, listOf(taskName), { result ->
+            assertTaskOutcome(result.build, taskName)
+            checker(result)
+        })
+    }
+
+    fun build(scriptDir: String, args: List<String>, checker: (Result) -> Unit) {
         val projectDir = File(tmpDir.newFolder(), scriptDir)
 
         GFileUtils.mkdirs(projectDir)
         FileOperations.copyResources(scriptDir, projectDir)
 
-        val runner = GradleRunner.create()
+        val result = GradleRunner.create()
                 .withPluginClasspath()
                 .withProjectDir(projectDir)
+                .withArguments(listOf("-i", "-S") + args)
+                .forwardOutput()
+                .build()
 
-        configurer(runner, projectDir)
+        checker(Result(result, projectDir))
     }
 
     fun assertTaskOutcomes(build: BuildResult, taskName: String, outcome: TaskOutcome = TaskOutcome.SUCCESS) {
@@ -40,31 +60,10 @@ abstract class BuildTest {
         assertEquals(outcome, build.task(taskName)?.outcome)
     }
 
-    fun assertPackage(projectDir: File, path: String): File {
-        val pkg = File(projectDir, path)
-
-        assertTrue("Composed OSGi package does not exist: $pkg", pkg.exists())
-        assertPackageFiles(pkg)
-
-        return pkg
+    fun assertFile(file: File) {
+        assertTrue("File does not exist: $file", file.exists())
     }
 
-    fun assertBundleFile(file: File, entry: String) {
-        assertPackageFile("Required file '$entry' is not included in OSGi bundle '$file'", file, entry)
-    }
 
-    fun assertPackageFile(message: String, file: File, entry: String) {
-        assertTrue(message, ZipUtil.containsEntry(file, entry))
-    }
-
-    fun assertPackageFiles(file: File) {
-        PACKAGE_FILES.onEach { assertBundleFile(file, it) }
-    }
-
-    companion object {
-        val PACKAGE_FILES = listOf(
-                PackagePlugin.METADATA_FILE
-        )
-    }
 
 }
