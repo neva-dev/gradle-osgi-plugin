@@ -1,0 +1,9 @@
+buildscript {
+    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
+}
+
+apply plugin: 'osgi.toolkit.bundle'
+apply plugin: 'com.jfrog.bintray'
+
+description = 'OSGi Toolkit - Package Manager'
+defaultTasks = ['publishToMavenLocal']

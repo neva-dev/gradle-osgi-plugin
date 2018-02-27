@@ -1,0 +1,9 @@
+apply from: '../plugin/buildscript.gradle'
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    classpath "com.neva.osgi.toolkit:gradle-plugin:1.0.0"
+}

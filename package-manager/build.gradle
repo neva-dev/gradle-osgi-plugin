@@ -1,8 +1,0 @@
-plugins {
-    id 'java'
-    id "com.jfrog.bintray"
-    id 'osgi.toolkit.bundle'
-}
-
-description = 'OSGi Toolkit - Package Manager'
-defaultTasks = ['publishToMavenLocal']

@@ -17,7 +17,7 @@ open class PackageTask : Jar() {
 
     @get:OutputFile
     val metadataFile: File
-        get() = project.file("${PackagePlugin.TMP_PATH}/${PackagePlugin.METADATA_FILE}")
+        get() = project.file("${PackagePlugin.TMP_PATH}/${PackagePlugin.PACKAGE_FILE}")
 
     @get:InputFiles
     @get:Optional

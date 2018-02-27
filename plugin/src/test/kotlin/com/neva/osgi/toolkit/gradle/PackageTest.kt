@@ -40,7 +40,7 @@ class PackageTest : BuildTest() {
 
     companion object {
         val PACKAGE_FILES = listOf(
-                PackagePlugin.METADATA_FILE
+                PackagePlugin.PACKAGE_FILE
         )
     }
 

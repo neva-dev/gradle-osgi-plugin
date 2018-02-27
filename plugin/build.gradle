@@ -1,12 +1,16 @@
-plugins {
-    id 'java-gradle-plugin'
-    id 'maven-publish'
-    id "org.jetbrains.kotlin.jvm"
-    id "com.jfrog.bintray"
+buildscript {
+    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
 }
+
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 description = 'OSGi Toolkit - Gradle Plugin'
 defaultTasks = ['publishToMavenLocal']
+
+apply from: '../common.gradle'
 
 dependencies {
     compile gradleApi()
@@ -47,21 +51,13 @@ gradlePlugin {
 
 test.dependsOn('publishToMavenLocal')
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-}
-
 bintray {
     user = project.properties.get('bintrayUser') ?: System.getenv('BINTRAY_USER')
     key = project.properties.get('bintrayKey') ?: System.getenv('BINTRAY_KEY')
     publications = ['mavenJava']
     pkg {
         repo = 'maven-public'
-        name = 'gradle-osgi-toolkit'
+        name = 'osgi-toolkit-gradle-plugin'
         userOrg = 'neva-dev'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/neva-dev/gradle-osgi-toolkit.git'

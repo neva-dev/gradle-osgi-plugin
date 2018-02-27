@@ -55,10 +55,10 @@ open class PackagePlugin : Plugin<Project> {
             val runtimeConfigs = mutableListOf(packageConfig)
 
             configurations.getByName(PACKAGE_CONFIG_NAME).resolve().forEach { bundle ->
-                val tmpPath = rootProject.file("${PACKAGE_CACHE_PATH}/${FileUtils.checksumCRC32(bundle)}")
+                val tmpPath = rootProject.file("${PACKAGE_CACHE_PATH}/${bundle.nameWithoutExtension}-${FileUtils.checksumCRC32(bundle)}")
                 if (!tmpPath.exists()) {
-                    if (!ZipUtil.containsEntry(bundle, "${OSGI_PATH}/")) {
-                        throw PackageException("Dependency is not a valid OSGi bundle: $bundle")
+                    if (!ZipUtil.containsEntry(bundle, PACKAGE_FILE)) {
+                        throw PackageException("Dependency is not a valid OSGi package: $bundle")
                     }
                     ZipUtil.iterate(bundle, { input, entry ->
                         if (!entry.name.endsWith("/") && Patterns.wildcard(entry.name, "${OSGI_PATH}/*")) {
@@ -69,7 +69,12 @@ open class PackagePlugin : Plugin<Project> {
                     })
                 }
 
-                val metadataJson = project.file("$tmpPath/${METADATA_FILE}")
+                val metadataFile = project.file("$tmpPath/${PACKAGE_FILE}")
+                if (!metadataFile.exists()) {
+                    throw PackageException("OSGi package cache has been corrupted, because no metadata file found for: $bundle")
+                }
+
+                val metadataJson = metadataFile
                         .bufferedReader().use { it.readText() }
                 val metadata = Formats.fromJson(metadataJson, PackageMetadata::class.java)
                         ?: throw PackageException("Cannot parse bundle metadata from file: $bundle")
@@ -139,7 +144,9 @@ open class PackagePlugin : Plugin<Project> {
 
         const val OSGI_PATH = "OSGI-INF"
 
-        const val METADATA_FILE = "$OSGI_PATH/metadata.json"
+        const val PACKAGE_FILE = "$OSGI_PATH/package.json"
+
+        const val DISTRIBUTION_FILE = "$OSGI_PATH/distribution.json"
 
         const val ARTIFACT_PATH = "$OSGI_PATH/artifact"
 

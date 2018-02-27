@@ -1,0 +1,7 @@
+// Project structure
+
+rootProject.name = 'tools'
+
+include 'package-manager'
+include 'framework-launcher'
+include 'distribution-launcher'

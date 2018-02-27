@@ -1,0 +1,8 @@
+buildscript {
+    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
+}
+
+description = 'OSGi Toolkit - Tools'
+defaultTasks = ['publishToMavenLocal']
+
+apply from: '../common.gradle'
