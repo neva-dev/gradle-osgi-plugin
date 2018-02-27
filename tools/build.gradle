@@ -11,7 +11,8 @@ defaultTasks = [':build']
 task make {
     dependsOn([
             ':framework-launcher:publishToMavenLocal',
-            ':distribution-launcher:publishToMavenLocal'
+            ':distribution-launcher:publishToMavenLocal',
+            ':package-manager:publishToMavenLocal'
     ])
 }
 

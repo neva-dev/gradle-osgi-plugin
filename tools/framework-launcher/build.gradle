@@ -2,7 +2,7 @@ buildscript {
     apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
 }
 
-apply plugin: 'java'
+apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 

@@ -1,7 +1,5 @@
 includeBuild 'plugin'
 includeBuild 'tools'
 
-System.out.println("AAA")
-
 rootProject.name = 'root'
 

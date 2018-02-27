@@ -1,9 +1,13 @@
 package com.neva.osgi.toolkit.gradle.instance
 
+import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.util.GFileUtils
+import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 
 // TODO shadow jar: distribution-launcher
@@ -20,34 +24,59 @@ open class DistributionTask : Jar() {
         group = "OSGi"
         description = "Creates OSGi distribution"
         classifier = "distribution"
+
+        project.afterEvaluate {
+            from(project.resolveDependency(packageManager), { it.into("OSGI-INF/packages") })
+            from(distributionDir, { it.into("OSGI-INF/distribution") })
+        }
     }
 
     @Input
-    var packageManager: Any = "com.neva.osgi.toolkit:distribution-launcher:1.0.0"
+    var packageManager: Any = "com.neva.osgi.toolkit:package-manager:1.0.0"
+
+    @Input
+    var distributionLauncher: Any = "com.neva.osgi.toolkit:distribution-launcher:1.0.0"
 
     @Input
     var frameworkLauncher: Any = "com.neva.osgi.toolkit:framework-launcher:1.0.0"
 
     @Input
-    var distributionDependency: Any = mapOf(
+    var distribution: Any = mapOf(
             "group" to "org.apache.felix",
             "name" to "org.apache.felix.main.distribution",
             "version" to "5.6.10",
             "ext" to "zip"
     )
 
+    @OutputDirectory
+    val distributionDir = project.file("build/tmp/osgi/distribution")
+
     @TaskAction
-    fun make() {
+    override fun copy() {
         logger.info("Creating OSGi distribution")
 
-        val pkgManagerBundle = project.resolveDependency(packageManager)
-        logger.info("Resolved package manager bundle: $pkgManagerBundle [exists: ${pkgManagerBundle.exists()}]")
+        logger.info("Downloading and extracting distribution: $distribution")
+        unpackDistribution()
 
-        val frameworkLauncherApp = project.resolveDependency(frameworkLauncher)
-        logger.info("Resolved framework launcher app: $frameworkLauncherApp [exists: ${frameworkLauncherApp.exists()}]")
+        logger.info("Downloading framework launcher and including it into distribution: $frameworkLauncher")
+        includeFrameworkLauncher()
 
-        val distributionLauncherApp = project.resolveDependency(distributionDependency)
-        logger.info("Resolved distribution launcher app: $distributionLauncherApp [exists: ${distributionLauncherApp.exists()}]")
+        logger.info("Composing distribution jar")
+        super.copy()
+        logger.info("Created OSGi distribution successfully.")
+    }
+
+    private fun unpackDistribution() {
+        val distributionZip = project.resolveDependency(distribution)
+        ZipUtil.unpack(distributionZip, distributionDir)
+    }
+
+    private fun includeFrameworkLauncher() {
+        val source = project.resolveDependency(frameworkLauncher)
+        val target = File(distributionDir, "bin/${source.name}")
+
+        GFileUtils.mkdirs(source.parentFile)
+        FileUtils.copyFile(source, target)
     }
 
     fun Project.resolveDependency(dependencyNotation: Any): File {
