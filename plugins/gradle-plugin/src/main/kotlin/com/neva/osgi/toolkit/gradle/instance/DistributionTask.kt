@@ -26,6 +26,7 @@ open class DistributionTask : Jar() {
         classifier = "distribution"
 
         project.afterEvaluate {
+            from(project.zipTree(project.resolveDependency(distributionLauncher)))
             from(project.resolveDependency(packageManager), { it.into("OSGI-INF/packages") })
             from(distributionDir, { it.into("OSGI-INF/distribution") })
         }

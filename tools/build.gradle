@@ -8,14 +8,11 @@ apply from: '../common.gradle'
 description = 'OSGi Toolkit - Tools'
 defaultTasks = [':build']
 
-task make {
-    dependsOn([
-            ':framework-launcher:publishToMavenLocal',
-            ':distribution-launcher:publishToMavenLocal',
-            ':package-manager:publishToMavenLocal'
-    ])
-}
-
+assemble.dependsOn([
+        ':framework-launcher:publishToMavenLocal',
+        ':distribution-launcher:publishToMavenLocal',
+        ':package-manager:publishToMavenLocal'
+])
 check.dependsOn([
         ':framework-launcher:check',
         ':distribution-launcher:check',
