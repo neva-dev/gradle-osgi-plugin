@@ -7,10 +7,12 @@ apply plugin: 'java-gradle-plugin'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
-description = 'OSGi Toolkit - Gradle Plugin'
-defaultTasks = ['publishToMavenLocal']
-
 apply from: '../common.gradle'
+
+description = 'OSGi Toolkit - Gradle Plugin'
+defaultTasks = [':make']
+
+task make { dependsOn publishToMavenLocal }
 
 dependencies {
     compile gradleApi()
@@ -48,8 +50,6 @@ gradlePlugin {
         }
     }
 }
-
-test.dependsOn('publishToMavenLocal')
 
 bintray {
     user = project.properties.get('bintrayUser') ?: System.getenv('BINTRAY_USER')
