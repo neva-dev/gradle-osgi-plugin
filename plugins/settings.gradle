@@ -1,0 +1,5 @@
+// Project structure
+
+rootProject.name = 'plugins'
+
+include 'gradle-plugin'

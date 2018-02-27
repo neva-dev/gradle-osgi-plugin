@@ -4,14 +4,14 @@ plugins {
 
 defaultTasks = [':build']
 
-task cleanPlugin { dependsOn gradle.includedBuild('gradle-plugin').task(':clean') }
-task makePlugin { dependsOn gradle.includedBuild('gradle-plugin').task(':make') }
-task checkPlugin { dependsOn gradle.includedBuild('gradle-plugin').task(':check') }
+task cleanPlugins { dependsOn gradle.includedBuild('plugins').task(':clean') }
+task makePlugins { dependsOn gradle.includedBuild('plugins').task(':make') }
+task checkPlugins { dependsOn gradle.includedBuild('plugins').task(':check') }
 
 task cleanTools { dependsOn gradle.includedBuild('tools').task(':clean') }
 task makeTools { dependsOn gradle.includedBuild('tools').task(':make') }
 task checkTools { dependsOn gradle.includedBuild('tools').task(':check') }
 
-clean.dependsOn(cleanPlugin, cleanTools)
-makeTools.dependsOn makePlugin
-build.dependsOn(makePlugin, makeTools, checkTools, checkPlugin)
+clean.dependsOn(cleanPlugins, cleanTools)
+makeTools.dependsOn makePlugins
+build.dependsOn(makePlugins, makeTools, checkTools, checkPlugins)

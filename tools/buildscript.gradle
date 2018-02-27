@@ -1,4 +1,4 @@
-apply from: '../plugin/buildscript.gradle'
+apply from: '../plugins/buildscript.gradle'
 
 repositories {
     mavenLocal()

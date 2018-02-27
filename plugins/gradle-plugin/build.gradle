@@ -1,0 +1,49 @@
+buildscript {
+    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
+}
+
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+description = 'OSGi Toolkit - Gradle Plugin'
+defaultTasks = [':publishToMavenLocal']
+
+gradlePlugin {
+    plugins {
+        base {
+            id = "osgi.toolkit.base"
+            implementationClass = "com.neva.osgi.toolkit.gradle.base.BasePlugin"
+        }
+        bundle {
+            id = "osgi.toolkit.bundle"
+            implementationClass = "com.neva.osgi.toolkit.gradle.bundle.BundlePlugin"
+        }
+        pkg {
+            id = "osgi.toolkit.package"
+            implementationClass = "com.neva.osgi.toolkit.gradle.pkg.PackagePlugin"
+        }
+        instance {
+            id = "osgi.toolkit.instance"
+            implementationClass = "com.neva.osgi.toolkit.gradle.instance.InstancePlugin"
+        }
+    }
+}
+
+dependencies {
+    compile gradleApi()
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.21"
+
+    compile 'org.zeroturnaround:zt-zip:1.12'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'commons-io:commons-io:2.4'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8'
+    compile 'org.reflections:reflections:0.9.9'
+    compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
+
+    testCompile gradleTestKit()
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+

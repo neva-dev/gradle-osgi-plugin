@@ -68,7 +68,7 @@ open class DistributionTask : Jar() {
 
     private fun unpackDistribution() {
         val distributionZip = project.resolveDependency(distribution)
-        ZipUtil.unpack(distributionZip, distributionDir)
+        ZipUtil.unpack(distributionZip, distributionDir, { it.substringAfter("/") })
     }
 
     private fun includeFrameworkLauncher() {

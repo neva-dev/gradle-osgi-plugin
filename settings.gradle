@@ -1,4 +1,4 @@
-includeBuild 'plugin'
+includeBuild 'plugins'
 includeBuild 'tools'
 
 rootProject.name = 'root'

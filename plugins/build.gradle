@@ -1,0 +1,5 @@
+apply plugin: 'base'
+apply from: '../common.gradle'
+
+task make { dependsOn ':gradle-plugin:publishToMavenLocal' }
+check.dependsOn(':gradle-plugin:check')

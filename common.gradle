@@ -41,4 +41,26 @@ allprojects { subproject ->
             }
         }
     }
+
+    plugins.withId 'com.jfrog.bintray', {
+        bintray {
+            user = project.properties.get('bintrayUser') ?: System.getenv('BINTRAY_USER')
+            key = project.properties.get('bintrayKey') ?: System.getenv('BINTRAY_KEY')
+            publications = ['mavenJava']
+            pkg {
+                repo = 'maven-public'
+                name = "osgi-toolkit-${subproject.name}"
+                userOrg = 'neva-dev'
+                licenses = ['Apache-2.0']
+                vcsUrl = 'https://github.com/neva-dev/gradle-osgi-toolkit.git'
+                labels = ['osgi', 'toolkit', 'felix', 'bundle']
+                version {
+                    name = project.version
+                    desc = "${project.description} ${project.version}"
+                    vcsTag = project.version
+                }
+            }
+            publish = true
+        }
+    }
 }
