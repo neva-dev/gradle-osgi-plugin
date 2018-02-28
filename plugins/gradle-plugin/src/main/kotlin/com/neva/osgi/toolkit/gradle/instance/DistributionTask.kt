@@ -1,5 +1,6 @@
 package com.neva.osgi.toolkit.gradle.instance
 
+import com.neva.osgi.toolkit.gradle.internal.FileOperations
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
@@ -13,7 +14,6 @@ import java.io.File
 // TODO shadow jar: distribution-launcher
 // TODO put osgiPackage into OSGI-INF/packages/app.jar (then distribution-launcher will install it using package-manager)
 // TODO put framework-launcher into OSGI-INF/distribution/framework-launcher.jar
-// TODO put package-manager into OSGI-INF/distribution/bundle/package-manager.jar
 open class DistributionTask : Jar() {
 
     companion object {
@@ -60,24 +60,33 @@ open class DistributionTask : Jar() {
         unpackDistribution()
 
         logger.info("Downloading framework launcher and including it into distribution: $frameworkLauncher")
-        includeFrameworkLauncher()
+        includeFrameworkLauncherJar()
+
+        logger.info("Including framework launcher scripts")
+        includeFrameworkLauncherScripts()
 
         logger.info("Composing distribution jar")
         super.copy()
         logger.info("Created OSGi distribution successfully.")
     }
 
+    // TODO detect if zip has at first level only dir (if yes, skip it, currently hardcoded)
     private fun unpackDistribution() {
         val distributionZip = project.resolveDependency(distribution)
         ZipUtil.unpack(distributionZip, distributionDir, { it.substringAfter("/") })
     }
 
-    private fun includeFrameworkLauncher() {
+    private fun includeFrameworkLauncherJar() {
         val source = project.resolveDependency(frameworkLauncher)
-        val target = File(distributionDir, "bin/${source.name}")
+        val target = File(distributionDir, "bin/launcher.jar")
 
         GFileUtils.mkdirs(source.parentFile)
         FileUtils.copyFile(source, target)
+    }
+
+    // TODO fix that
+    private fun includeFrameworkLauncherScripts() {
+        FileOperations.copyResources("distribution", distributionDir, true)
     }
 
     fun Project.resolveDependency(dependencyNotation: Any): File {
