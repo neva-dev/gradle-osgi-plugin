@@ -17,4 +17,16 @@ open class InstancePlugin : Plugin<Project> {
         tasks.create(DistributionTask.NAME, DistributionTask::class.java)
     }
 
+    companion object {
+
+        const val TMP_PATH = "build/tmp/osgi/instance"
+
+        const val OSGI_PATH = "OSGI-INF"
+
+        const val METADATA_FILE = "$OSGI_PATH/distribution.json"
+
+        const val DISTRIBUTION_PATH = "$OSGI_PATH/distribution"
+
+    }
+
 }

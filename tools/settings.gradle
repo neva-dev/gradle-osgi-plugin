@@ -2,6 +2,6 @@
 
 rootProject.name = 'tools'
 
-include 'package-manager'
+include 'web-manager'
 include 'framework-launcher'
 include 'distribution-launcher'

@@ -10,7 +10,7 @@ description = 'OSGi Toolkit - Framework Launcher'
 defaultTasks = ['publishToMavenLocal']
 
 dependencies {
-    compile 'org.apache.felix:org.apache.felix.main:5.6.10'
+    compileOnly 'org.apache.felix:org.apache.felix.main:5.6.10'
     compile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.21'
 }
 

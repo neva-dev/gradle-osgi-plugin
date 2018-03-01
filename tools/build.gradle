@@ -11,10 +11,10 @@ defaultTasks = [':build']
 assemble.dependsOn([
         ':framework-launcher:publishToMavenLocal',
         ':distribution-launcher:publishToMavenLocal',
-        ':package-manager:publishToMavenLocal'
+        ':web-manager:publishToMavenLocal'
 ])
 check.dependsOn([
         ':framework-launcher:check',
         ':distribution-launcher:check',
-        ':package-manager:check'
+        ':web-manager:check'
 ])

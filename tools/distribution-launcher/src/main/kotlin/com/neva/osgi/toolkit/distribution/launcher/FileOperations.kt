@@ -1,23 +1,15 @@
-package com.neva.osgi.toolkit.gradle.internal
+package com.neva.osgi.toolkit.distribution.launcher
 
 import org.apache.commons.io.IOUtils
-import org.gradle.util.GFileUtils
 import org.reflections.Reflections
 import org.reflections.scanners.ResourcesScanner
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 
 object FileOperations {
 
-    const val PKG = "com.neva.osgi.toolkit.gradle"
-
-    fun readResource(path: String): InputStream? {
-        return javaClass.getResourceAsStream("/${PKG.replace(".", "/")}/$path")
-    }
-
     fun getResources(path: String): List<String> {
-        val pkg = "$PKG.$path".replace("/", ".")
+        val pkg = path.replace("/", ".")
         val reflections = Reflections(pkg, ResourcesScanner())
 
         return reflections.getResources { true; }.toList()
@@ -40,7 +32,7 @@ object FileOperations {
     }
 
     fun copyResource(resourcePath: String, outputFile: File) {
-        GFileUtils.mkdirs(outputFile.parentFile)
+        outputFile.parentFile.mkdirs()
 
         val input = javaClass.getResourceAsStream("/" + resourcePath)
         val output = FileOutputStream(outputFile)

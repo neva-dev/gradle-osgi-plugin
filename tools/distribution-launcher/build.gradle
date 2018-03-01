@@ -8,3 +8,22 @@ apply plugin: 'com.jfrog.bintray'
 
 description = 'OSGi Toolkit - Distribution Launcher'
 defaultTasks = ['publishToMavenLocal']
+
+jar {
+    manifest {
+        attributes([
+                'Main-Class'            : 'com.neva.osgi.toolkit.distribution.launcher.Launcher',
+                'Implementation-Title'  : project.description,
+                'Implementation-Version': project.version
+        ])
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
+    compile 'org.reflections:reflections:0.9.9'
+    compile 'commons-io:commons-io:2.4'
+}

@@ -7,5 +7,5 @@ apply plugin: 'osgi.toolkit.bundle'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
-description = 'OSGi Toolkit - Package Manager'
+description = 'OSGi Toolkit - Web Manager'
 defaultTasks = ['publishToMavenLocal']

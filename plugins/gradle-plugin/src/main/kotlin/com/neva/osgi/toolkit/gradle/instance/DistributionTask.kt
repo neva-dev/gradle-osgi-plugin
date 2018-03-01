@@ -1,20 +1,19 @@
 package com.neva.osgi.toolkit.gradle.instance
 
 import com.neva.osgi.toolkit.gradle.internal.FileOperations
+import com.neva.osgi.toolkit.gradle.internal.Formats
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.util.GFileUtils
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 
-// TODO shadow jar: distribution-launcher
-// TODO put osgiPackage into OSGI-INF/packages/app.jar (then distribution-launcher will install it using package-manager)
-// TODO put framework-launcher into OSGI-INF/distribution/framework-launcher.jar
-open class DistributionTask : Jar() {
+open class DistributionTask : Zip() {
 
     companion object {
         const val NAME = "osgiDistribution"
@@ -24,22 +23,25 @@ open class DistributionTask : Jar() {
         group = "OSGi"
         description = "Creates OSGi distribution"
         classifier = "distribution"
+        extension = "jar"
 
         project.afterEvaluate {
             from(project.zipTree(project.resolveDependency(distributionLauncher)))
-            from(project.resolveDependency(packageManager), { it.into("OSGI-INF/packages") })
-            from(distributionDir, { it.into("OSGI-INF/distribution") })
+            from(distributionDir, { it.into(InstancePlugin.DISTRIBUTION_PATH) })
         }
     }
-
-    @Input
-    var packageManager: Any = "com.neva.osgi.toolkit:package-manager:1.0.0"
 
     @Input
     var distributionLauncher: Any = "com.neva.osgi.toolkit:distribution-launcher:1.0.0"
 
     @Input
     var frameworkLauncher: Any = "com.neva.osgi.toolkit:framework-launcher:1.0.0"
+
+    @Input
+    var frameworkLauncherMainClass: String = "com.neva.osgi.toolkit.framework.launcher.Launcher"
+
+    @Input
+    var packageManager: Any = "com.neva.osgi.toolkit:web-manager:1.0.0"
 
     @Input
     var distribution: Any = mapOf(
@@ -49,8 +51,13 @@ open class DistributionTask : Jar() {
             "ext" to "zip"
     )
 
-    @OutputDirectory
-    val distributionDir = project.file("build/tmp/osgi/distribution")
+    @get:OutputDirectory
+    val distributionDir: File
+        get() = project.file("${InstancePlugin.TMP_PATH}/${InstancePlugin.DISTRIBUTION_PATH}")
+
+    @get:OutputFile
+    val metadataFile: File
+        get() = project.file("${InstancePlugin.TMP_PATH}/${InstancePlugin.METADATA_FILE}")
 
     @TaskAction
     override fun copy() {
@@ -65,6 +72,12 @@ open class DistributionTask : Jar() {
         logger.info("Including framework launcher scripts")
         includeFrameworkLauncherScripts()
 
+        logger.info("Downloading package manager and including it into distribution: $packageManager")
+        includeWebManager()
+
+        logger.info("Generating metadata file")
+        generateMetadataFile()
+
         logger.info("Composing distribution jar")
         super.copy()
         logger.info("Created OSGi distribution successfully.")
@@ -78,18 +91,34 @@ open class DistributionTask : Jar() {
 
     private fun includeFrameworkLauncherJar() {
         val source = project.resolveDependency(frameworkLauncher)
-        val target = File(distributionDir, "bin/launcher.jar")
+        val target = File(distributionDir, "bin/${source.name}")
 
         GFileUtils.mkdirs(source.parentFile)
         FileUtils.copyFile(source, target)
     }
 
-    // TODO fix that
     private fun includeFrameworkLauncherScripts() {
         FileOperations.copyResources("distribution", distributionDir, true)
     }
 
-    fun Project.resolveDependency(dependencyNotation: Any): File {
+    private fun includeWebManager() {
+        val source = project.resolveDependency(packageManager)
+        val target = File(distributionDir, "bundle/${source.name}")
+
+        GFileUtils.mkdirs(source.parentFile)
+        FileUtils.copyFile(source, target)
+    }
+
+    private fun generateMetadataFile() {
+        GFileUtils.mkdirs(metadataFile.parentFile)
+
+        val metadata = DistributionMetadata.of(project)
+        val json = Formats.toJson(metadata)
+
+        metadataFile.printWriter().use { it.print(json) }
+    }
+
+    private fun Project.resolveDependency(dependencyNotation: Any): File {
         return configurations.detachedConfiguration(dependencies.create(dependencyNotation)).singleFile
     }
 

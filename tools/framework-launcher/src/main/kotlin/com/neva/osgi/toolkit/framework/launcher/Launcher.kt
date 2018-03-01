@@ -1,3 +1,5 @@
+package com.neva.osgi.toolkit.framework.launcher
+
 import org.apache.felix.main.Main
 import java.io.File
 import java.lang.management.ManagementFactory

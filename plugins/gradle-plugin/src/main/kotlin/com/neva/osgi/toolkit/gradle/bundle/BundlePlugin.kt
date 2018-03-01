@@ -53,8 +53,7 @@ open class BundlePlugin : Plugin<Project> {
         testSourceSet.runtimeClasspath += compileOnlyConfig
 
         // Make SCR metadata be generated while unit testing
-        // TODO below could be done better, be more 'archivePath' agnostic
-        test.classpath += project.files(jar.archivePath)
+        project.gradle.projectsEvaluated {  test.classpath += project.files(jar.archivePath) }
 
         // Use BND tool to make valid OSGi bundle basing on JAR
         val bundleConvention = BundleTaskConvention(jar)

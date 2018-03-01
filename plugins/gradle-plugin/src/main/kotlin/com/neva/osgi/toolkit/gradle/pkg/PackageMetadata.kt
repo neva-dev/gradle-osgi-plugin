@@ -8,8 +8,8 @@ class PackageMetadata : Serializable {
     companion object {
         fun of(project: Project): PackageMetadata {
             return PackageMetadata().apply {
-                artifact = PackageDependency.from(project)
-                dependencies = PackageDependency.manyFrom(project)
+                artifact = PackageDependency.artifact(project)
+                dependencies = PackageDependency.dependencies(project)
             }
         }
     }

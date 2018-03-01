@@ -57,7 +57,7 @@ open class PackagePlugin : Plugin<Project> {
             configurations.getByName(PACKAGE_CONFIG_NAME).resolve().forEach { bundle ->
                 val tmpPath = rootProject.file("${PACKAGE_CACHE_PATH}/${bundle.nameWithoutExtension}-${FileUtils.checksumCRC32(bundle)}")
                 if (!tmpPath.exists()) {
-                    if (!ZipUtil.containsEntry(bundle, PACKAGE_FILE)) {
+                    if (!ZipUtil.containsEntry(bundle, METADATA_FILE)) {
                         throw PackageException("Dependency is not a valid OSGi package: $bundle")
                     }
                     ZipUtil.iterate(bundle, { input, entry ->
@@ -69,7 +69,7 @@ open class PackagePlugin : Plugin<Project> {
                     })
                 }
 
-                val metadataFile = project.file("$tmpPath/${PACKAGE_FILE}")
+                val metadataFile = project.file("$tmpPath/$METADATA_FILE")
                 if (!metadataFile.exists()) {
                     throw PackageException("OSGi package cache has been corrupted, because no metadata file found for: $bundle")
                 }
@@ -130,7 +130,7 @@ open class PackagePlugin : Plugin<Project> {
 
     companion object {
 
-        const val TMP_PATH = "build/tmp/osgiPackage"
+        const val TMP_PATH = "build/tmp/osgi/package"
 
         const val COMPILE_CONFIG_NAME = "osgiCompile"
 
@@ -144,9 +144,7 @@ open class PackagePlugin : Plugin<Project> {
 
         const val OSGI_PATH = "OSGI-INF"
 
-        const val PACKAGE_FILE = "$OSGI_PATH/package.json"
-
-        const val DISTRIBUTION_FILE = "$OSGI_PATH/distribution.json"
+        const val METADATA_FILE = "$OSGI_PATH/package.json"
 
         const val ARTIFACT_PATH = "$OSGI_PATH/artifact"
 

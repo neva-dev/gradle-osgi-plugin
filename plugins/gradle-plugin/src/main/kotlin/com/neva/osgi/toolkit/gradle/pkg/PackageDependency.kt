@@ -11,7 +11,7 @@ class PackageDependency : Serializable {
 
     companion object {
 
-        fun from(project: Project): PackageDependency {
+        fun artifact(project: Project): PackageDependency {
             val bundleTask = project.tasks.getByName(PackageTask.NAME) as PackageTask
             val file = bundleTask.artifactFile
 
@@ -31,7 +31,7 @@ class PackageDependency : Serializable {
             }
         }
 
-        fun manyFrom(project: Project): List<PackageDependency> {
+        fun dependencies(project: Project): List<PackageDependency> {
             val task = project.tasks.getByName(PackageTask.NAME) as PackageTask
 
             return task.dependencies.map { from(project, it.key, it.value) }

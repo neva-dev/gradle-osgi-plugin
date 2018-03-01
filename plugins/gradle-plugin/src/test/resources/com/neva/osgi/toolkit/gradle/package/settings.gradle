@@ -1,1 +1,15 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.namespace == 'osgi.toolkit') {
+                useModule('com.neva.osgi.toolkit:gradle-plugin:1.0.0')
+            }
+        }
+    }
+}
+
 rootProject.name = 'example'
