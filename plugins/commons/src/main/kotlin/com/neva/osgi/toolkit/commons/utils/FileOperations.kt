@@ -14,7 +14,7 @@ object FileOperations {
     }
 
     fun getResources(path: String): List<String> {
-        val pkg = path.replace("/", "")
+        val pkg = path.replace("/", ".")
         val reflections = Reflections(pkg, ResourcesScanner())
 
         return reflections.getResources { true; }.toList()

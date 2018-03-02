@@ -14,7 +14,7 @@ class PackageTest : BuildTest() {
             val pkg = result.file("build/libs/example-1.0.0.jar")
 
             assertPackage(pkg)
-            assertPackageFile(pkg, "OSGI-INF/artifact/example-1.0.0.jar")
+            assertPackageFile(pkg, "${Package.ARTIFACT_PATH}/example-1.0.0.jar")
             //assertPackageFile(pkg, "bundle/dependencies/xxx.jar")
         })
     }

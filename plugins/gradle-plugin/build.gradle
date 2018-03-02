@@ -8,7 +8,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 description = 'OSGi Toolkit - Gradle Plugin'
-defaultTasks = [':publishToMavenLocal']
+defaultTasks = ['publishToMavenLocal']
 
 gradlePlugin {
     plugins {
@@ -33,7 +33,7 @@ gradlePlugin {
 
 dependencies {
     compile gradleApi()
-    compile project(':commons')
+    compile 'com.neva.osgi.toolkit:commons:1.0.0'
     compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
 
     testCompile gradleTestKit()
