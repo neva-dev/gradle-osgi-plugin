@@ -1,6 +1,7 @@
 package com.neva.osgi.toolkit.gradle.pkg
 
-import com.neva.osgi.toolkit.gradle.internal.Formats
+import com.neva.osgi.toolkit.commons.domain.Package
+import com.neva.osgi.toolkit.commons.utils.Formats
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.*
@@ -17,7 +18,7 @@ open class PackageTask : Jar() {
 
     @get:OutputFile
     val metadataFile: File
-        get() = project.file("${PackagePlugin.TMP_PATH}/${PackagePlugin.METADATA_FILE}")
+        get() = project.file("${PackagePlugin.TMP_PATH}/${Package.METADATA_FILE}")
 
     @get:InputFiles
     @get:Optional
@@ -46,9 +47,9 @@ open class PackageTask : Jar() {
         description = "Create OSGi package"
 
         project.afterEvaluate {
-            into(PackagePlugin.OSGI_PATH, { it.from(metadataFile) })
-            into(PackagePlugin.ARTIFACT_PATH, { it.from(artifactFile) })
-            dependencies.forEach { d, f -> into("${PackagePlugin.DEPENDENCIES_PATH}/${d.group}", { it.from(f) }) }
+            into(Package.OSGI_PATH, { it.from(metadataFile) })
+            into(Package.ARTIFACT_PATH, { it.from(artifactFile) })
+            dependencies.forEach { d, f -> into("${Package.DEPENDENCIES_PATH}/${d.group}", { it.from(f) }) }
         }
     }
 

@@ -1,15 +1,20 @@
-package com.neva.osgi.toolkit.distribution.launcher
+package com.neva.osgi.toolkit.commons.utils
 
 import org.apache.commons.io.IOUtils
 import org.reflections.Reflections
 import org.reflections.scanners.ResourcesScanner
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 
 object FileOperations {
 
+    fun readResource(path: String): InputStream? {
+        return javaClass.getResourceAsStream("/$path")
+    }
+
     fun getResources(path: String): List<String> {
-        val pkg = path.replace("/", ".")
+        val pkg = path.replace("/", "")
         val reflections = Reflections(pkg, ResourcesScanner())
 
         return reflections.getResources { true; }.toList()

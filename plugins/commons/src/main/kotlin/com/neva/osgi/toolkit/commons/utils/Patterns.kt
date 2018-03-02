@@ -1,4 +1,4 @@
-package com.neva.osgi.toolkit.gradle.internal
+package com.neva.osgi.toolkit.commons.utils
 
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOCase
@@ -6,7 +6,7 @@ import java.io.File
 
 object Patterns {
 
-    fun wildcards(path: String, filters: String) : Boolean {
+    fun wildcards(path: String, filters: String): Boolean {
         return filters.split(",").any { filter -> wildcard(path, filter) }
     }
 

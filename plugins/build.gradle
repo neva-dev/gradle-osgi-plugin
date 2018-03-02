@@ -1,5 +1,11 @@
 apply plugin: 'base'
 apply from: '../common.gradle'
 
-assemble.dependsOn ':gradle-plugin:publishToMavenLocal'
-check.dependsOn ':gradle-plugin:check'
+assemble.dependsOn(
+    ':commons:publishToMavenLocal',
+    ':gradle-plugin:publishToMavenLocal'
+)
+check.dependsOn(
+    ':commons:check',
+    ':gradle-plugin:check',
+)

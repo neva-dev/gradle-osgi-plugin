@@ -53,7 +53,7 @@ open class BundlePlugin : Plugin<Project> {
         testSourceSet.runtimeClasspath += compileOnlyConfig
 
         // Make SCR metadata be generated while unit testing
-        project.gradle.projectsEvaluated {  test.classpath += project.files(jar.archivePath) }
+        gradle.projectsEvaluated { test.classpath += project.files(jar.archivePath) }
 
         // Use BND tool to make valid OSGi bundle basing on JAR
         val bundleConvention = BundleTaskConvention(jar)
@@ -67,9 +67,27 @@ open class BundlePlugin : Plugin<Project> {
         jar.doLast {
             bundleConvention.buildBundle()
         }
+
+        // Setup non-OSGI jars embedding
+        val embedConfig = configurations.create(CONFIG_EMBED, { it.isTransitive = false })
+        gradle.projectsEvaluated {
+            val jars = embedConfig.files.sortedBy { it.name }
+            if (jars.isNotEmpty()) {
+                jar.from(jars)
+                jar.doFirst {
+                    val list = mutableListOf(".").apply { jars.forEach { file -> add(file.name) } }
+                    val classPath = list.joinToString(",")
+                    if (!jar.manifest.attributes.containsKey("Bundle-ClassPath")) {
+                        jar.manifest.attributes(mapOf("Bundle-ClassPath" to classPath))
+                    }
+                }
+            }
+        }
     }
 
     companion object {
+
+        const val CONFIG_EMBED = "osgiEmbed"
 
         const val BND_FILE = "bnd.bnd"
 

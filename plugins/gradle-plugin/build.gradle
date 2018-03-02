@@ -33,14 +33,7 @@ gradlePlugin {
 
 dependencies {
     compile gradleApi()
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.2.21"
-
-    compile 'org.zeroturnaround:zt-zip:1.12'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'commons-io:commons-io:2.4'
-    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8'
-    compile 'org.reflections:reflections:0.9.9'
+    compile project(':commons')
     compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
 
     testCompile gradleTestKit()

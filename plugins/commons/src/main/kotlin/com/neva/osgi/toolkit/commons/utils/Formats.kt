@@ -1,4 +1,4 @@
-package com.neva.osgi.toolkit.gradle.internal
+package com.neva.osgi.toolkit.commons.utils
 
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter

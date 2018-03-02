@@ -8,13 +8,30 @@ apply from: '../common.gradle'
 description = 'OSGi Toolkit - Tools'
 defaultTasks = [':build']
 
-assemble.dependsOn([
+clean.dependsOn(
+        ':framework-launcher:clean',
+        ':distribution-launcher:clean',
+        ':web-manager:clean'
+)
+assemble.dependsOn(
         ':framework-launcher:publishToMavenLocal',
         ':distribution-launcher:publishToMavenLocal',
         ':web-manager:publishToMavenLocal'
-])
-check.dependsOn([
+)
+check.dependsOn(
         ':framework-launcher:check',
         ':distribution-launcher:check',
         ':web-manager:check'
-])
+)
+
+subprojects { subproject ->
+
+    plugins.withId 'org.jetbrains.kotlin.jvm', {
+
+        dependencies {
+            compile 'com.neva.osgi.toolkit:commons:1.0.0'
+        }
+
+    }
+
+}

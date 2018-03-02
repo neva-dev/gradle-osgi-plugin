@@ -1,6 +1,6 @@
 package com.neva.osgi.toolkit.gradle
 
-import com.neva.osgi.toolkit.gradle.internal.FileOperations
+import com.neva.osgi.toolkit.commons.utils.FileOperations
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -63,7 +63,6 @@ abstract class BuildTest {
     fun assertFile(file: File) {
         assertTrue("File does not exist: $file", file.exists())
     }
-
 
 
 }

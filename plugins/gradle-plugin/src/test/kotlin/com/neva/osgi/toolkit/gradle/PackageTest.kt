@@ -1,6 +1,6 @@
 package com.neva.osgi.toolkit.gradle
 
-import com.neva.osgi.toolkit.gradle.pkg.PackagePlugin
+import com.neva.osgi.toolkit.commons.domain.Package
 import org.junit.Assert
 import org.junit.Test
 import org.zeroturnaround.zip.ZipUtil
@@ -40,7 +40,7 @@ class PackageTest : BuildTest() {
 
     companion object {
         val PACKAGE_FILES = listOf(
-                PackagePlugin.METADATA_FILE
+                Package.METADATA_FILE
         )
     }
 

@@ -1,7 +1,8 @@
 package com.neva.osgi.toolkit.gradle.instance
 
-import com.neva.osgi.toolkit.gradle.internal.FileOperations
-import com.neva.osgi.toolkit.gradle.internal.Formats
+import com.neva.osgi.toolkit.commons.domain.Instance
+import com.neva.osgi.toolkit.commons.utils.FileOperations
+import com.neva.osgi.toolkit.commons.utils.Formats
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
@@ -27,7 +28,7 @@ open class DistributionTask : Zip() {
 
         project.afterEvaluate {
             from(project.zipTree(project.resolveDependency(distributionLauncher)))
-            from(distributionDir, { it.into(InstancePlugin.DISTRIBUTION_PATH) })
+            from(distributionDir, { it.into(Instance.DISTRIBUTION_PATH) })
         }
     }
 
@@ -53,11 +54,11 @@ open class DistributionTask : Zip() {
 
     @get:OutputDirectory
     val distributionDir: File
-        get() = project.file("${InstancePlugin.TMP_PATH}/${InstancePlugin.DISTRIBUTION_PATH}")
+        get() = project.file("${InstancePlugin.TMP_PATH}/${Instance.DISTRIBUTION_PATH}")
 
     @get:OutputFile
     val metadataFile: File
-        get() = project.file("${InstancePlugin.TMP_PATH}/${InstancePlugin.METADATA_FILE}")
+        get() = project.file("${InstancePlugin.TMP_PATH}/${Instance.METADATA_FILE}")
 
     @TaskAction
     override fun copy() {
@@ -119,7 +120,10 @@ open class DistributionTask : Zip() {
     }
 
     private fun Project.resolveDependency(dependencyNotation: Any): File {
-        return configurations.detachedConfiguration(dependencies.create(dependencyNotation)).singleFile
+        val dependency = dependencies.create(dependencyNotation)
+        val config = configurations.detachedConfiguration(dependency).apply { isTransitive = false }
+
+        return config.singleFile
     }
 
 }

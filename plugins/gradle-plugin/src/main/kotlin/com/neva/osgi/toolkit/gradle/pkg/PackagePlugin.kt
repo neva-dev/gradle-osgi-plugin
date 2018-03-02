@@ -1,8 +1,9 @@
 package com.neva.osgi.toolkit.gradle.pkg
 
+import com.neva.osgi.toolkit.commons.domain.Package
+import com.neva.osgi.toolkit.commons.utils.Formats
+import com.neva.osgi.toolkit.commons.utils.Patterns
 import com.neva.osgi.toolkit.gradle.bundle.BundlePlugin
-import com.neva.osgi.toolkit.gradle.internal.Formats
-import com.neva.osgi.toolkit.gradle.internal.Patterns
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.gradle.api.Plugin
@@ -55,13 +56,13 @@ open class PackagePlugin : Plugin<Project> {
             val runtimeConfigs = mutableListOf(packageConfig)
 
             configurations.getByName(PACKAGE_CONFIG_NAME).resolve().forEach { bundle ->
-                val tmpPath = rootProject.file("${PACKAGE_CACHE_PATH}/${bundle.nameWithoutExtension}-${FileUtils.checksumCRC32(bundle)}")
+                val tmpPath = rootProject.file("$PACKAGE_CACHE_PATH/${bundle.nameWithoutExtension}-${FileUtils.checksumCRC32(bundle)}")
                 if (!tmpPath.exists()) {
-                    if (!ZipUtil.containsEntry(bundle, METADATA_FILE)) {
+                    if (!ZipUtil.containsEntry(bundle, Package.METADATA_FILE)) {
                         throw PackageException("Dependency is not a valid OSGi package: $bundle")
                     }
                     ZipUtil.iterate(bundle, { input, entry ->
-                        if (!entry.name.endsWith("/") && Patterns.wildcard(entry.name, "${OSGI_PATH}/*")) {
+                        if (!entry.name.endsWith("/") && Patterns.wildcard(entry.name, "${Package.OSGI_PATH}/*")) {
                             val file = project.file("$tmpPath/${entry.name}")
                             GFileUtils.mkdirs(file.parentFile)
                             IOUtils.copy(input, FileOutputStream(file))
@@ -69,7 +70,7 @@ open class PackagePlugin : Plugin<Project> {
                     })
                 }
 
-                val metadataFile = project.file("$tmpPath/$METADATA_FILE")
+                val metadataFile = project.file("$tmpPath/${Package.METADATA_FILE}")
                 if (!metadataFile.exists()) {
                     throw PackageException("OSGi package cache has been corrupted, because no metadata file found for: $bundle")
                 }
@@ -82,7 +83,7 @@ open class PackagePlugin : Plugin<Project> {
                 metadata.allDependencies.map { dependency ->
                     val depConfigName = "bundle_${dependency.notation}"
                     val depConfig = configurations.create(depConfigName)
-                    val source = project.files("$tmpPath/${DEPENDENCIES_PATH}/${dependency.path}")
+                    val source = project.files("$tmpPath/${Package.DEPENDENCIES_PATH}/${dependency.path}")
 
                     dependencies.add(depConfigName, PackageSelfResolvingDependency(source, dependency))
 
@@ -141,14 +142,6 @@ open class PackagePlugin : Plugin<Project> {
         const val PACKAGE_CONFIG_NAME = "osgiPackage"
 
         const val PACKAGE_CACHE_PATH = ".gradle/osgiPackages"
-
-        const val OSGI_PATH = "OSGI-INF"
-
-        const val METADATA_FILE = "$OSGI_PATH/package.json"
-
-        const val ARTIFACT_PATH = "$OSGI_PATH/artifact"
-
-        const val DEPENDENCIES_PATH = "$OSGI_PATH/dependencies"
 
         const val PUBLICATION_MAVEN = "mavenOsgiPackage"
 

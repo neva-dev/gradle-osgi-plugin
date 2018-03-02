@@ -21,12 +21,6 @@ open class InstancePlugin : Plugin<Project> {
 
         const val TMP_PATH = "build/tmp/osgi/instance"
 
-        const val OSGI_PATH = "OSGI-INF"
-
-        const val METADATA_FILE = "$OSGI_PATH/distribution.json"
-
-        const val DISTRIBUTION_PATH = "$OSGI_PATH/distribution"
-
     }
 
 }
