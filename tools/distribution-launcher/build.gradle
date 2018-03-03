@@ -24,6 +24,4 @@ jar {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
-    compile 'org.reflections:reflections:0.9.9'
-    compile 'commons-io:commons-io:2.4'
 }

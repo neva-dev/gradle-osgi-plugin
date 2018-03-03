@@ -11,6 +11,5 @@ defaultTasks = ['publishToMavenLocal']
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
-    compile 'org.reflections:reflections:0.9.9'
 }
 

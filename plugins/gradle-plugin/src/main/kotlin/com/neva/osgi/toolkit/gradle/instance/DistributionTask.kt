@@ -1,7 +1,7 @@
 package com.neva.osgi.toolkit.gradle.instance
 
 import com.neva.osgi.toolkit.commons.domain.Instance
-import com.neva.osgi.toolkit.commons.utils.ResourceOperations
+import com.neva.osgi.toolkit.gradle.internal.ResourceOperations
 import com.neva.osgi.toolkit.gradle.internal.Formats
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project

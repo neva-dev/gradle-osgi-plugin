@@ -36,6 +36,7 @@ dependencies {
     compile 'com.neva.osgi.toolkit:commons:1.0.0'
     compile 'commons-io:commons-io:2.4'
     compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8'
+    compile 'org.reflections:reflections:0.9.11'
     compile 'org.zeroturnaround:zt-zip:1.12'
     compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
 

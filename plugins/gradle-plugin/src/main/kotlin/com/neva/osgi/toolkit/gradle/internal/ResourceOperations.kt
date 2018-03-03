@@ -1,4 +1,4 @@
-package com.neva.osgi.toolkit.commons.utils
+package com.neva.osgi.toolkit.gradle.internal
 
 import org.reflections.Reflections
 import org.reflections.scanners.ResourcesScanner

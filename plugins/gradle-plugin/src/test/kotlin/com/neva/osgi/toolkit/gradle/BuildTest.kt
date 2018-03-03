@@ -1,6 +1,6 @@
 package com.neva.osgi.toolkit.gradle
 
-import com.neva.osgi.toolkit.commons.utils.ResourceOperations
+import com.neva.osgi.toolkit.gradle.internal.ResourceOperations
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
