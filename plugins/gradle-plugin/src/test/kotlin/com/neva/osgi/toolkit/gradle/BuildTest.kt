@@ -40,7 +40,7 @@ abstract class BuildTest {
         val projectDir = File(tmpDir.newFolder(), scriptDir)
 
         GFileUtils.mkdirs(projectDir)
-        ResourceOperations.copyDir(scriptDir, projectDir)
+        ResourceOperations.copyDir("OSGI-INF/toolkit/$scriptDir", projectDir)
 
         val result = GradleRunner.create()
                 .withPluginClasspath()

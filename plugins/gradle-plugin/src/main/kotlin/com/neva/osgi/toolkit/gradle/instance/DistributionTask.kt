@@ -99,7 +99,7 @@ open class DistributionTask : Zip() {
     }
 
     private fun includeFrameworkLauncherScripts() {
-        ResourceOperations.copyDir("distribution", distributionDir, true)
+        ResourceOperations.copyDir("OSGI-INF/toolkit/distribution", distributionDir, true)
     }
 
     private fun includeWebManager() {
