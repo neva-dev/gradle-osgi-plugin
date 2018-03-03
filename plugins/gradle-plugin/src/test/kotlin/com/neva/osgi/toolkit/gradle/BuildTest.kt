@@ -1,6 +1,6 @@
 package com.neva.osgi.toolkit.gradle
 
-import com.neva.osgi.toolkit.commons.utils.FileOperations
+import com.neva.osgi.toolkit.commons.utils.ResourceOperations
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -40,7 +40,7 @@ abstract class BuildTest {
         val projectDir = File(tmpDir.newFolder(), scriptDir)
 
         GFileUtils.mkdirs(projectDir)
-        FileOperations.copyResources(scriptDir, projectDir)
+        ResourceOperations.copyDir(scriptDir, projectDir)
 
         val result = GradleRunner.create()
                 .withPluginClasspath()
