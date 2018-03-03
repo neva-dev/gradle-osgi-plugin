@@ -1,8 +1,8 @@
 package com.neva.osgi.toolkit.gradle.pkg
 
 import com.neva.osgi.toolkit.commons.domain.Package
-import com.neva.osgi.toolkit.commons.utils.Formats
-import com.neva.osgi.toolkit.commons.utils.Patterns
+import com.neva.osgi.toolkit.gradle.internal.Formats
+import com.neva.osgi.toolkit.gradle.internal.Patterns
 import com.neva.osgi.toolkit.gradle.bundle.BundlePlugin
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils

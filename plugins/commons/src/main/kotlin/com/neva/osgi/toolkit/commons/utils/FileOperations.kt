@@ -1,6 +1,5 @@
 package com.neva.osgi.toolkit.commons.utils
 
-import org.apache.commons.io.IOUtils
 import org.reflections.Reflections
 import org.reflections.scanners.ResourcesScanner
 import java.io.File
@@ -42,12 +41,7 @@ object FileOperations {
         val input = javaClass.getResourceAsStream("/" + resourcePath)
         val output = FileOutputStream(outputFile)
 
-        try {
-            IOUtils.copy(input, output)
-        } finally {
-            IOUtils.closeQuietly(input)
-            IOUtils.closeQuietly(output)
-        }
+        input.copyTo(output)
     }
 
 }

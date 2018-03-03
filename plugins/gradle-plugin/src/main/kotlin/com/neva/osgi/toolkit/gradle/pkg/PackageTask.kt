@@ -1,7 +1,7 @@
 package com.neva.osgi.toolkit.gradle.pkg
 
 import com.neva.osgi.toolkit.commons.domain.Package
-import com.neva.osgi.toolkit.commons.utils.Formats
+import com.neva.osgi.toolkit.gradle.internal.Formats
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.*

@@ -1,10 +1,10 @@
-package com.neva.osgi.toolkit.commons.utils
+package com.neva.osgi.toolkit.gradle.internal
 
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.commons.lang3.time.DurationFormatUtils
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object Formats {
 
@@ -49,7 +49,11 @@ object Formats {
     }
 
     fun duration(millis: Long): String {
-        return DurationFormatUtils.formatDurationHMS(millis)
+        return String.format("%d min, %d sec",
+                TimeUnit.MILLISECONDS.toMinutes(millis),
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+        )
     }
 
 }
