@@ -51,7 +51,7 @@ class PackageDependency : Serializable {
                 name = dependency.name
                 version = dependency.version!!
                 path = "$group/${file.name}"
-                configurations = Configurations.of(project, dependency)
+                configuration = Configuration.of(project, dependency)
             }
         }
 
@@ -65,21 +65,26 @@ class PackageDependency : Serializable {
 
     lateinit var version: String
 
-    var configurations: Configurations = Configurations()
+    var configuration = Configuration.COMPILE
 
     @get:JsonIgnore
     val notation: String
         get() = "$group:$name:$version"
 
 
-    class Configurations(val compile: Boolean = true, var runtime: Boolean = true) : Serializable {
+
+    enum class Configuration {
+        COMPILE_ONLY,
+        COMPILE,
+        RUNTIME;
 
         companion object {
-            fun of(project: Project, dependency: Dependency): Configurations {
-                return Configurations(
-                        check(project, dependency, PackagePlugin.COMPILE_CONFIG_NAME),
-                        check(project, dependency, PackagePlugin.RUNTIME_CONFIG_NAME)
-                )
+            fun of(project: Project, dependency: Dependency): Configuration {
+                return when {
+                    check(project, dependency, PackagePlugin.COMPILE_ONLY_CONFIG_NAME) -> COMPILE_ONLY
+                    check(project, dependency, PackagePlugin.RUNTIME_CLASSPATH_CONFIG_NAME) -> RUNTIME
+                    else -> COMPILE
+                }
             }
 
             private fun check(project: Project, dependency: Dependency, config: String): Boolean {

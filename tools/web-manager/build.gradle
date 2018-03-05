@@ -8,7 +8,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 description = 'OSGi Toolkit - Web Manager'
-defaultTasks = ['publishToMavenLocal']
+defaultTasks = ['clean', 'build', 'publishToMavenLocal']
 
 jar {
     manifest {
@@ -27,3 +27,12 @@ dependencies {
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-osgi-bundle', version: '1.2.21'
     compile group: 'org.osgi', name: 'osgi.cmpn', version: '6.0.0'
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+publishToMavenLocal.dependsOn(jar)

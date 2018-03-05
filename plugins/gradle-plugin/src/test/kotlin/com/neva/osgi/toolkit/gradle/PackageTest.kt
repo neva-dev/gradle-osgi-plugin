@@ -11,7 +11,7 @@ class PackageTest : BuildTest() {
     @Test
     fun shouldCreateValidPackage() {
         build("package", ":osgiPackage", { result ->
-            val pkg = result.file("build/libs/example-1.0.0.jar")
+            val pkg = result.file("build/osgi/packages/example-1.0.0.jar")
 
             assertPackage(pkg)
             assertPackageFile(pkg, "${Package.ARTIFACT_PATH}/example-1.0.0.jar")

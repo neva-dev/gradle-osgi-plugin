@@ -7,7 +7,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 description = 'OSGi Toolkit - Distribution Launcher'
-defaultTasks = ['publishToMavenLocal']
+defaultTasks = ['clean', 'build', 'publishToMavenLocal']
 
 jar {
     manifest {
@@ -25,3 +25,12 @@ jar {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21"
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+publishToMavenLocal.dependsOn(jar)

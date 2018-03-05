@@ -1,27 +1,26 @@
-buildscript {
-    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
-}
-
 apply plugin: 'base'
 apply from: '../common.gradle'
 
 description = 'OSGi Toolkit - Tools'
-defaultTasks = [':build']
+defaultTasks = [':assemble']
 
 clean.dependsOn(
         ':framework-launcher:clean',
         ':distribution-launcher:clean',
-        ':web-manager:clean'
+        ':web-manager:clean',
+        ':base:clean'
 )
 assemble.dependsOn(
         ':framework-launcher:publishToMavenLocal',
         ':distribution-launcher:publishToMavenLocal',
-        ':web-manager:publishToMavenLocal'
+        ':web-manager:publishToMavenLocal',
+        ':base:publishToMavenLocal',
 )
 check.dependsOn(
         ':framework-launcher:check',
         ':distribution-launcher:check',
-        ':web-manager:check'
+        ':web-manager:check',
+        ':base:check'
 )
 
 subprojects { subproject ->

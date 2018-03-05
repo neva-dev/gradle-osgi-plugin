@@ -1,0 +1,30 @@
+buildscript {
+    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
+}
+
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'osgi.toolkit.package'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+description = 'OSGi Toolkit - Base Package'
+defaultTasks = ['clean', 'build', 'publishToMavenLocal']
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    osgiProvided project(':web-manager')
+    osgiProvided group: 'org.osgi', name: 'osgi.core', version: '6.0.0'
+    osgiProvided group: 'org.osgi', name: 'osgi.cmpn', version: '6.0.0'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact osgiPackage
+        }
+    }
+}
+publishToMavenLocal.dependsOn(osgiPackage)

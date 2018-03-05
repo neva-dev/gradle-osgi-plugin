@@ -1,8 +1,9 @@
 package com.neva.osgi.toolkit.gradle.instance
 
 import com.neva.osgi.toolkit.commons.domain.Instance
-import com.neva.osgi.toolkit.gradle.internal.ResourceOperations
+import com.neva.osgi.toolkit.commons.domain.Package
 import com.neva.osgi.toolkit.gradle.internal.Formats
+import com.neva.osgi.toolkit.gradle.internal.ResourceOperations
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
@@ -23,7 +24,7 @@ open class DistributionTask : Zip() {
     init {
         group = "OSGi"
         description = "Creates OSGi distribution"
-        classifier = "distribution"
+        destinationDir = project.file("build/osgi/distributions")
         extension = "jar"
 
         project.afterEvaluate {
@@ -42,7 +43,7 @@ open class DistributionTask : Zip() {
     var frameworkLauncherMainClass: String = "com.neva.osgi.toolkit.framework.launcher.Launcher"
 
     @Input
-    var packageManager: Any = "com.neva.osgi.toolkit:web-manager:1.0.0"
+    var basePackage: Any = "com.neva.osgi.toolkit:base:1.0.0"
 
     @Input
     var distribution: Any = mapOf(
@@ -62,35 +63,34 @@ open class DistributionTask : Zip() {
 
     @TaskAction
     override fun copy() {
-        logger.info("Creating OSGi distribution")
+        logger.info("Creating OSGi distribution.")
 
-        logger.info("Downloading and extracting distribution: $distribution")
         unpackDistribution()
-
-        logger.info("Downloading framework launcher and including it into distribution: $frameworkLauncher")
         includeFrameworkLauncherJar()
-
-        logger.info("Including framework launcher scripts")
         includeFrameworkLauncherScripts()
-
-        logger.info("Downloading package manager and including it into distribution: $packageManager")
-        includeWebManager()
-
-        logger.info("Generating metadata file")
+        includeBasePackage()
         generateMetadataFile()
+        packDistribution()
 
+        logger.info("Created OSGi distribution successfully.")
+    }
+
+    private fun packDistribution() {
         logger.info("Composing distribution jar")
         super.copy()
-        logger.info("Created OSGi distribution successfully.")
     }
 
     // TODO detect if zip has at first level only dir (if yes, skip it, currently hardcoded)
     private fun unpackDistribution() {
+        logger.info("Downloading and extracting distribution")
+
         val distributionZip = project.resolveDependency(distribution)
         ZipUtil.unpack(distributionZip, distributionDir, { it.substringAfter("/") })
     }
 
     private fun includeFrameworkLauncherJar() {
+        logger.info("Downloading framework launcher and including it into distribution")
+
         val source = project.resolveDependency(frameworkLauncher)
         val target = File(distributionDir, "bin/${source.name}")
 
@@ -99,18 +99,28 @@ open class DistributionTask : Zip() {
     }
 
     private fun includeFrameworkLauncherScripts() {
+        logger.info("Including framework launcher scripts")
+
         ResourceOperations.copyDir("OSGI-INF/toolkit/distribution", distributionDir, true)
     }
 
-    private fun includeWebManager() {
-        val source = project.resolveDependency(packageManager)
-        val target = File(distributionDir, "bundle/${source.name}")
+    private fun includeBasePackage() {
+        logger.info("Downloading base package and including it into distribution")
 
-        GFileUtils.mkdirs(source.parentFile)
-        FileUtils.copyFile(source, target)
+        val baseZip = project.resolveDependency(basePackage)
+
+        ZipUtil.unpack(baseZip, distributionDir, { name ->
+            if (name.startsWith(Package.DEPENDENCIES_PATH + "/")) {
+                "bundle/${name.substringAfter(Package.DEPENDENCIES_PATH + "/")}"
+            } else {
+                null
+            }
+        })
     }
 
     private fun generateMetadataFile() {
+        logger.info("Generating metadata file")
+
         GFileUtils.mkdirs(metadataFile.parentFile)
 
         val metadata = DistributionMetadata.of(project)
@@ -120,8 +130,13 @@ open class DistributionTask : Zip() {
     }
 
     private fun Project.resolveDependency(dependencyNotation: Any): File {
+        logger.info("Resolving distribution dependency: $dependencyNotation")
+
         val dependency = dependencies.create(dependencyNotation)
-        val config = configurations.detachedConfiguration(dependency).apply { isTransitive = false }
+        val config = configurations.detachedConfiguration(dependency).apply {
+            description = dependencyNotation.toString()
+            isTransitive = false
+        }
 
         return config.singleFile
     }

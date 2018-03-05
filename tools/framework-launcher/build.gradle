@@ -7,7 +7,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 description = 'OSGi Toolkit - Framework Launcher'
-defaultTasks = ['publishToMavenLocal']
+defaultTasks = ['clean', 'build', 'publishToMavenLocal']
 
 dependencies {
     compileOnly 'org.apache.felix:org.apache.felix.main:5.6.10'
@@ -26,3 +26,12 @@ jar {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+publishToMavenLocal.dependsOn(jar)

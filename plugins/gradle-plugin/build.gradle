@@ -33,7 +33,7 @@ gradlePlugin {
 
 dependencies {
     compile gradleApi()
-    compile 'com.neva.osgi.toolkit:commons:1.0.0'
+    compile project(':commons')
     compile 'commons-io:commons-io:2.4'
     compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8'
     compile 'org.reflections:reflections:0.9.11'
@@ -42,5 +42,13 @@ dependencies {
 
     testCompile gradleTestKit()
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }
 

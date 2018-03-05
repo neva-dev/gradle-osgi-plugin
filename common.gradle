@@ -3,6 +3,7 @@ allprojects { subproject ->
     version = '1.0.0'
 
     repositories {
+        mavenLocal()
         jcenter()
     }
 
@@ -29,16 +30,6 @@ allprojects { subproject ->
                             'Implementation-Title'  : project.description,
                             'Implementation-Version': project.version
                     ])
-                }
-            }
-        }
-
-        plugins.withId 'maven-publish', {
-            publishing {
-                publications {
-                    mavenJava(MavenPublication) {
-                        from components.java
-                    }
                 }
             }
         }

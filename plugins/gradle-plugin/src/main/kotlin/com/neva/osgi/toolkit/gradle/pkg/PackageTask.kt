@@ -31,7 +31,7 @@ open class PackageTask : Jar() {
             val config = project.configurations.getByName(PackagePlugin.ALL_CONFIG_NAME)
             return config.allDependencies.fold(mutableMapOf(), { r, d ->
                 val file = config.files(d).singleOrNull()
-                if (file != null && file.exists() && isOsgiBundle(file)) {
+                if (file != null && file.exists()) {
                     r[d] = file
                 }
                 r
@@ -45,6 +45,7 @@ open class PackageTask : Jar() {
     init {
         group = "OSGi"
         description = "Create OSGi package"
+        destinationDir = project.file("build/osgi/packages")
 
         project.afterEvaluate {
             into(Package.OSGI_PATH, { it.from(metadataFile) })
@@ -53,13 +54,14 @@ open class PackageTask : Jar() {
         }
     }
 
-    private fun isOsgiBundle(file: File): Boolean {
-        return try {
-            !Bundle(file).manifest.mainAttributes.getValue("Bundle-SymbolicName").isNullOrBlank()
-        } catch (e: Exception) {
-            false
-        }
-    }
+    // TODO move it to eachFile / filter
+//    private fun isOsgiBundle(file: File): Boolean {
+//        return try {
+//            !Bundle(file).manifest.mainAttributes.getValue("Bundle-SymbolicName").isNullOrBlank()
+//        } catch (e: Exception) {
+//            false
+//        }
+//    }
 
     @TaskAction
     override fun copy() {
