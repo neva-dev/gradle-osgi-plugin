@@ -22,7 +22,7 @@ open class DistributionTask : Zip() {
 
     init {
         group = "OSGi"
-        description = "Creates OSGi distribution"
+        description = "Create self-extractable OSGi distribution"
         destinationDir = project.file("build/osgi/distributions")
         extension = "jar"
 

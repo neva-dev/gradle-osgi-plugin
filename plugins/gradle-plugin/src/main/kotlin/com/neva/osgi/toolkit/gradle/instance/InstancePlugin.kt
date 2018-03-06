@@ -14,7 +14,13 @@ open class InstancePlugin : Plugin<Project> {
         logger.info("Applying OSGi instance plugin")
 
         plugins.apply(BasePlugin::class.java)
-        tasks.create(DistributionTask.NAME, DistributionTask::class.java)
+
+        val distributionTask = tasks.create(DistributionTask.NAME, DistributionTask::class.java)
+        val createTask = tasks.create(CreateTask.NAME, CreateTask::class.java)
+        val upTask = tasks.create(UpTask.NAME, UpTask::class.java)
+        val haltTask = tasks.create(HaltTask.NAME, HaltTask::class.java)
+
+        createTask.dependsOn(distributionTask)
     }
 
     companion object {
