@@ -1,7 +1,6 @@
 package com.neva.osgi.toolkit.gradle.instance
 
 import com.neva.osgi.toolkit.commons.domain.Instance
-import com.neva.osgi.toolkit.commons.domain.Package
 import com.neva.osgi.toolkit.gradle.internal.Formats
 import com.neva.osgi.toolkit.gradle.internal.ResourceOperations
 import org.apache.commons.io.FileUtils
@@ -34,6 +33,14 @@ open class DistributionTask : Zip() {
     }
 
     @Input
+    var distribution: Any = mapOf(
+            "group" to "org.apache.felix",
+            "name" to "org.apache.felix.main.distribution",
+            "version" to "5.6.10",
+            "ext" to "zip"
+    )
+
+    @Input
     var distributionLauncher: Any = "com.neva.osgi.toolkit:distribution-launcher:1.0.0"
 
     @Input
@@ -43,14 +50,11 @@ open class DistributionTask : Zip() {
     var frameworkLauncherMainClass: String = "com.neva.osgi.toolkit.framework.launcher.Launcher"
 
     @Input
-    var basePackage: Any = "com.neva.osgi.toolkit:base:1.0.0"
-
-    @Input
-    var distribution: Any = mapOf(
-            "group" to "org.apache.felix",
-            "name" to "org.apache.felix.main.distribution",
-            "version" to "5.6.10",
-            "ext" to "zip"
+    var baseBundles: List<Any> = mutableListOf(
+            "org.osgi:osgi.core:6.0.0",
+            "org.apache.felix:org.apache.felix.scr:2.0.14",
+            "org.apache.felix:org.apache.felix.fileinstall:3.6.4",
+            "com.neva.osgi.toolkit:web-manager:1.0.0"
     )
 
     @get:OutputDirectory
@@ -68,7 +72,7 @@ open class DistributionTask : Zip() {
         unpackDistribution()
         includeFrameworkLauncherJar()
         includeFrameworkLauncherScripts()
-        includeBasePackage()
+        includeBaseBundles()
         generateMetadataFile()
         packDistribution()
 
@@ -91,11 +95,7 @@ open class DistributionTask : Zip() {
     private fun includeFrameworkLauncherJar() {
         logger.info("Downloading framework launcher and including it into distribution")
 
-        val source = project.resolveDependency(frameworkLauncher)
-        val target = File(distributionDir, "bin/${source.name}")
-
-        GFileUtils.mkdirs(source.parentFile)
-        FileUtils.copyFile(source, target)
+        project.includeDependency(frameworkLauncher, "bin")
     }
 
     private fun includeFrameworkLauncherScripts() {
@@ -104,18 +104,10 @@ open class DistributionTask : Zip() {
         ResourceOperations.copyDir("OSGI-INF/toolkit/distribution", distributionDir, true)
     }
 
-    private fun includeBasePackage() {
-        logger.info("Downloading base package and including it into distribution")
+    private fun includeBaseBundles() {
+        logger.info("Downloading base bundles and including them into distribution")
 
-        val baseZip = project.resolveDependency(basePackage)
-
-        ZipUtil.unpack(baseZip, distributionDir, { name ->
-            if (name.startsWith(Package.DEPENDENCIES_PATH + "/")) {
-                "bundle/${name.substringAfter(Package.DEPENDENCIES_PATH + "/")}"
-            } else {
-                null
-            }
-        })
+        baseBundles.forEach { project.includeDependency(it, "bundle") }
     }
 
     private fun generateMetadataFile() {
@@ -129,8 +121,18 @@ open class DistributionTask : Zip() {
         metadataFile.printWriter().use { it.print(json) }
     }
 
+    private fun Project.includeDependency(dependencyNotation: Any, path: String) {
+        val source = project.resolveDependency(dependencyNotation)
+        val target = File(distributionDir, "$path/${source.name}")
+
+        logger.info("Copying distribution dependency '${source.name}' into '$path'")
+
+        GFileUtils.mkdirs(source.parentFile)
+        FileUtils.copyFile(source, target)
+    }
+
     private fun Project.resolveDependency(dependencyNotation: Any): File {
-        logger.info("Resolving distribution dependency: $dependencyNotation")
+        logger.info("Resolving distribution dependency '$dependencyNotation' into '$path'")
 
         val dependency = dependencies.create(dependencyNotation)
         val config = configurations.detachedConfiguration(dependency).apply {
