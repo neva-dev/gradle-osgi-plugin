@@ -51,7 +51,7 @@ class InstanceHandler(val project: Project) {
 
     fun up() {
         if (frameworkLauncherLock.exists()) {
-            logger.info("OSGi instance is already running.")
+            logger.warn("OSGi instance is already running.")
             return
         }
 
@@ -61,7 +61,7 @@ class InstanceHandler(val project: Project) {
 
     fun halt() {
         if (!frameworkLauncherLock.exists()) {
-            logger.info("OSGi instance is not running.")
+            logger.warn("OSGi instance is not running.")
             return
         }
 
@@ -78,9 +78,11 @@ class InstanceHandler(val project: Project) {
     }
 
     fun executeScript(script: Script) {
-        ProcessBuilder(*script.commandLine.toTypedArray())
-                .directory(instanceDir)
-                .start()
+        ProcessBuilder(*script.commandLine.toTypedArray()).apply {
+            redirectErrorStream()
+            directory(instanceDir)
+            start()
+        }
     }
 
     fun lock(name: String) = Lock(instanceDir, "$name.lock")
